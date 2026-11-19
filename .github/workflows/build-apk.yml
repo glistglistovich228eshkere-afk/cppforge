@@ -34,6 +34,9 @@ jobs:
 
       - name: Build debug APK
         working-directory: android
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: gradle :app:assembleDebug --no-daemon
 
       - name: Prepare APK for release
@@ -41,7 +44,7 @@ jobs:
 
       - name: Read app version
         id: ver
-        run: echo "version=$(python3 -c \"import json; print(json.load(open('version.json'))['version'])\")" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(python3 -c "import json; print(json.load(open('version.json'))['version'])")" >> "$GITHUB_OUTPUT"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

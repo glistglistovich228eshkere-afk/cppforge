@@ -70,9 +70,12 @@ class MainActivity : Activity() {
 
     // Google device sign-in: show a code, the user approves it on google.com/device, we poll for tokens.
     private fun signInFlow() {
+        val clientId = BuildConfig.GOOGLE_CLIENT_ID
+        val secret = BuildConfig.GOOGLE_CLIENT_SECRET
+        if (clientId.isEmpty() || secret.isEmpty()) {
+            return pushError("Google sign-in isn't set up in this build yet.")
+        }
         try {
-            val clientId = getString(R.string.google_client_id)
-            val secret = getString(R.string.google_client_secret)
             val dev = postForm(DEVICE_URL, mapOf("client_id" to clientId, "scope" to "openid email profile"))
             if (dev.has("error")) {
                 return pushError(dev.optString("error_description", dev.optString("error")))
