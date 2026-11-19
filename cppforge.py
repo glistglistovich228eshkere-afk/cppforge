@@ -23,7 +23,7 @@ USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 GOLD = "\033[38;2;212;175;55m"
 IVORY = "\033[38;2;236;230;214m"
 MUTED = "\033[38;2;110;112;130m"
-VIOLET = "\033[38;2;167;139;250m"
+SILVER = "\033[38;2;201;204;214m"
 MINT = "\033[38;2;110;220;170m"
 ROSE = "\033[38;2;240;113;120m"
 BOLD = "\033[1m"
@@ -269,7 +269,7 @@ def apply_update():
 
 
 def do_update(info):
-    print(VIOLET + f"  Downloading cppforge {info.get('version')}..." + RESET)
+    print(SILVER + f"  Downloading cppforge {info.get('version')}..." + RESET)
     try:
         apply_update()
     except PermissionError:
@@ -293,7 +293,7 @@ def highlight(line):
         elif s:
             out.append(ROSE + s + RESET)
         elif pre:
-            out.append(VIOLET + pre + RESET)
+            out.append(SILVER + pre + RESET)
         elif word:
             out.append((GOLD + BOLD + word + RESET) if word in KEYWORDS else (IVORY + word + RESET))
         elif ws:
@@ -364,7 +364,7 @@ def screen_lessons(done, update_info):
     print()
     pct = int(100 * len(done) / len(LESSONS))
     bar = "█" * (pct // 5) + "░" * (20 - pct // 5)
-    print(f"  {VIOLET}{bar}{RESET} {MUTED}{pct}%{RESET}\n")
+    print(f"  {SILVER}{bar}{RESET} {MUTED}{pct}%{RESET}\n")
     if update_info:
         print(GOLD + f"  ↑ Update {update_info.get('version')} is available. Press [u] to install." + RESET + "\n")
     print(MUTED + "  [number] open lesson   [u] update   [x] reset   [q] quit" + RESET)
