@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>cppforge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@600;700&display=swap">
+<style>
+:root{--bg:#0b0b12;--card:#14141f;--gold:#d4af37;--ivory:#ece6d6;--muted:#6e7082;--violet:#a78bfa;--mint:#6edcaa;--rose:#f07178}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(120% 60% at 50% 0%,#1d1838 0%,var(--bg) 60%) fixed,var(--bg);color:var(--ivory);font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+main{max-width:640px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 24px)}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--bg);background:linear-gradient(135deg,#f5d67a,var(--gold));font-weight:700;box-shadow:0 0 24px rgba(212,175,55,.35)}
+.name{font-family:'Playfair Display',Georgia,serif;font-size:24px;letter-spacing:.06em}
+.tag{font-size:12px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--card);border:1px solid rgba(212,175,55,.22);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+.kicker{font-size:12px;color:var(--violet);letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
+.title{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:30px;margin:0 0 12px;min-height:1.2em}
+h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;margin:0 0 16px;line-height:1.35;min-height:2em}
+.body{line-height:1.65;font-size:15px;min-height:3em;margin:0}
+.code{background:#08080d;border:1px solid #23233a;border-radius:12px;padding:14px;font-size:13.5px;line-height:1.55;overflow-x:auto;white-space:pre;min-height:4em;margin:16px 0}
+.code div{min-height:1.55em}
+.kw{color:var(--gold);font-weight:700}.st{color:var(--rose)}.cm{color:var(--muted);font-style:italic}.pp{color:var(--violet)}
+.typing::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--gold);vertical-align:-.15em;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.btn,.opt,.lesson,.ghost{font:inherit;cursor:pointer;border-radius:12px;transition:transform .15s,opacity .2s}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#f5d67a,var(--gold));color:var(--bg);border:0;padding:13px 18px;font-weight:700}
+.btn:disabled{opacity:.35;cursor:default}
+.btn:active,.opt:active,.lesson:active{transform:scale(.98)}
+.opt{display:block;width:100%;text-align:left;background:#1b1b2b;color:var(--ivory);border:1px solid #2a2a42;padding:13px 14px;margin-bottom:10px;font-size:14px}
+.opt:disabled{opacity:.5;cursor:default}
+.lesson{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#14141f;color:var(--ivory);border:1px solid #23233a;padding:14px;margin-bottom:10px;font-size:15px}
+.lesson.got{border-color:rgba(110,220,170,.45)}
+.num{color:var(--gold);width:22px}.tick{margin-left:auto;color:var(--mint)}
+.progress{height:8px;border-radius:99px;background:#1c1c2c;overflow:hidden}
+.progress div{height:100%;background:linear-gradient(90deg,var(--violet),var(--gold));transition:width .6s}
+.meta{font-size:12px;color:var(--muted);margin:8px 0 18px}
+.ghost{background:none;border:0;color:var(--muted);padding:10px;width:100%;margin-top:6px}
+.fb{min-height:3em;line-height:1.6;margin:14px 0}.ok{color:var(--mint)}.bad{color:var(--rose)}
+.btns{display:grid;gap:8px;margin-top:10px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const LESSONS = [
+  {
+    title: 'Hello, World',
+    text: 'Every C++ program begins running at main(). The include line pulls in the I/O library, and std::cout sends text to your terminal.',
+    code: ['#include <iostream>', '', 'int main() {', '    std::cout << "Hello, World!" << std::endl;', '    return 0;', '}'],
+    quiz: { q: 'Which object prints text to the terminal?', options: ['std::cin', 'std::cout', 'std::print_all', 'console.log'], answer: 1, why: 'std::cout is the standard output stream. std::cin reads input.' }
+  },
+  {
+    title: 'Variables & Types',
+    text: 'C++ is statically typed: every variable has a type known at compile time. auto asks the compiler to deduce the type from the initializer.',
+    code: ['int year = 2026;', 'double pi = 3.14159;', 'bool ready = true;', "char grade = 'A';", 'auto count = 42;  // deduced as int'],
+    quiz: { q: "Which keyword lets the compiler deduce a variable's type?", options: ['var', 'let', 'auto', 'dynamic'], answer: 2, why: 'auto deduces the type from the value you assign.' }
+  },
+  {
+    title: 'Control Flow',
+    text: 'if and for decide what runs and how often. A classic for loop has three parts: start, condition, and step.',
+    code: ['for (int i = 0; i < 3; ++i) {', '    if (i % 2 == 0) {', '        std::cout << i << " is even" << std::endl;', '    }', '}'],
+    quiz: { q: 'How many times does for (int i = 0; i < 3; ++i) run?', options: ['2', '3', '4', 'Forever'], answer: 1, why: 'i takes the values 0, 1, and 2, so the body runs three times.' }
+  },
+  {
+    title: 'Functions & References',
+    text: "A function can take an int& parameter. The & makes it a reference, so changes inside the function affect the caller's variable.",
+    code: ['void bump(int& x) {', '    x += 1;', '}', '', 'int main() {', '    int n = 5;', '    bump(n);  // n is now 6', '}'],
+    quiz: { q: 'What does the & in int& x mean?', options: ['Bitwise AND', 'Address of a copy', "A reference to the caller's variable", 'A pointer to a string'], answer: 2, why: 'A reference is an alias, so modifying x modifies the original.' }
+  },
+  {
+    title: 'Vectors & Range-for',
+    text: 'std::vector is a resizable array and the everyday container of C++. The range-for loop visits each element without manual indexing.',
+    code: ['#include <vector>', '', 'std::vector<int> v{1, 2, 3};', 'v.push_back(4);', 'for (int n : v) {', '    std::cout << n << " ";', '}'],
+    quiz: { q: 'Which method returns how many elements a std::vector holds?', options: ['length()', 'size()', 'count()', 'len()'], answer: 1, why: 'size() is the standard member function for element count.' }
+  },
+  {
+    title: 'Classes',
+    text: 'A class bundles data and behavior. Methods marked const promise not to modify the object, which lets the compiler catch mistakes for you.',
+    code: ['class Dog {', 'public:', '    std::string name;', '', '    void speak() const {', '        std::cout << name << " says woof" << std::endl;', '    }', '};'],
+    quiz: { q: "Which keyword promises a member function won't modify the object?", options: ['static', 'const', 'final', 'readonly'], answer: 1, why: 'Placing const after the parameter list makes the method read-only.' }
+  }
+];
+
+const KW = new Set(['include','int','double','float','bool','char','auto','void','return','if','else','for','while','class','public','private','const','using','namespace','struct']);
+const TOK = /(\/\/.*$)|("(?:\\.|[^"\\])*")|(#\w+)|(\b\w+\b)|(\s+)|([\s\S])/g;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function hl(line) {
+  return line.replace(TOK, (m, com, str, pre, word, ws, other) => {
+    if (com) return '<span class="cm">' + esc(com) + '</span>';
+    if (str) return '<span class="st">' + esc(str) + '</span>';
+    if (pre) return '<span class="pp">' + esc(pre) + '</span>';
+    if (word) return KW.has(word) ? '<span class="kw">' + word + '</span>' : word;
+    return esc(m);
+  });
+}
+
+let done = new Set(JSON.parse(localStorage.getItem('cppforge.done') || '[]'));
+let skipping = false;
+const app = document.getElementById('app');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+document.addEventListener('pointerdown', () => { skipping = true; });
+
+// Typewriter: types one character at a time. Tap the screen to finish instantly.
+async function typeInto(el, text, speed = 16) {
+  if (!el) return;
+  skipping = false;
+  el.classList.add('typing');
+  for (const ch of text) {
+    if (skipping) break;
+    el.textContent += ch;
+    await sleep(speed * (0.4 + Math.random() * 1.2));
+  }
+  el.textContent = text;
+  el.classList.remove('typing');
+}
+
+function menu() {
+  const pct = Math.round(100 * done.size / LESSONS.length);
+  app.innerHTML = `
+    <header class="brand"><div class="logo">C++</div><div><div class="name">cppforge</div><div class="tag">learn · build</div></div></header>
+    <div class="progress"><div style="width:${pct}%"></div></div>
+    <div class="meta">${done.size}/${LESSONS.length} complete · ${pct}%</div>
+    ${LESSONS.map((L, i) => `
+      <button class="lesson ${done.has(i) ? 'got' : ''}" onclick="openLesson(${i})">
+        <span class="num">${i + 1}</span><span>${esc(L.title)}</span>
+        <span class="tick">${done.has(i) ? '✓' : ''}</span>
+      </button>`).join('')}
+    <button class="ghost" onclick="resetProgress()">Reset progress</button>`;
+}
+
+async function openLesson(i) {
+  const L = LESSONS[i];
+  app.innerHTML = `<div class="card">
+    <div class="kicker">Lesson ${i + 1} of ${LESSONS.length}</div>
+    <div class="title" id="t"></div>
+    <p class="body" id="b"></p>
+    <pre class="code" id="c"></pre>
+    <button class="btn" id="next" disabled>Continue</button></div>`;
+  await typeInto(document.getElementById('t'), L.title, 40);
+  await typeInto(document.getElementById('b'), L.text, 14);
+  const pre = document.getElementById('c');
+  for (const line of L.code) {
+    pre.insertAdjacentHTML('beforeend', '<div>' + (hl(line) || '&nbsp;') + '</div>');
+    if (!skipping) await sleep(90);
+  }
+  const next = document.getElementById('next');
+  if (next) { next.disabled = false; next.onclick = () => quiz(i); }
+}
+
+function quiz(i) {
+  const Q = LESSONS[i].quiz;
+  app.innerHTML = `<div class="card">
+    <div class="kicker">Quiz · ${esc(LESSONS[i].title)}</div>
+    <h2 id="q"></h2>
+    <div id="opts"></div>
+    <div class="fb" id="fb"></div></div>`;
+  typeInto(document.getElementById('q'), Q.q, 16).then(() => {
+    const opts = document.getElementById('opts');
+    if (opts) opts.innerHTML = Q.options.map((o, n) =>
+      `<button class="opt" onclick="answer(${i}, ${n})">${n + 1}&nbsp;&nbsp;${esc(o)}</button>`).join('');
+  });
+}
+
+function answer(i, n) {
+  const Q = LESSONS[i].quiz;
+  const fb = document.getElementById('fb');
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  const right = n === Q.answer;
+  if (right) {
+    done.add(i);
+    localStorage.setItem('cppforge.done', JSON.stringify([...done]));
+  }
+  fb.className = 'fb ' + (right ? 'ok' : 'bad');
+  typeInto(fb, (right ? '✦ Correct. ' : '✧ Not quite. ') + Q.why, 12).then(() => {
+    fb.insertAdjacentHTML('beforeend', `<div class="btns">${right ? '' : `<button class="btn" onclick="quiz(${i})">Try again</button>`}<button class="ghost" onclick="menu()">Back to path</button></div>`);
+  });
+}
+
+function resetProgress() {
+  done = new Set();
+  localStorage.setItem('cppforge.done', '[]');
+  menu();
+}
+
+menu();
+</script>
+</body>
+</html>
