@@ -19,7 +19,6 @@
 html[data-blur=subtle]{--blur:10px}
 html[data-blur=heavy]{--blur:32px}
 
-/* Liquid Glass theme */
 html[data-theme=glass]{
   --bg:#060608; --card:rgba(18,18,24,.55); --line:rgba(255,208,0,.18);
   --panel:rgba(18,18,24,.55); --panel-line:rgba(255,208,0,.18);
@@ -53,7 +52,6 @@ button{cursor:pointer}
 .grow{flex:1}
 .app{height:100%;display:flex;flex-direction:column;position:relative}
 
-/* Header */
 header.top{height:56px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;border-width:0 0 1px;position:relative;z-index:5}
 .icon-btn{background:none;border:1px solid var(--line);color:var(--text);width:38px;height:38px;border-radius:10px;display:grid;place-items:center;transition:all .3s var(--ease)}
 .icon-btn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px rgba(255,208,0,.2)}
@@ -69,7 +67,6 @@ header.top{height:56px;flex:none;display:flex;align-items:center;gap:10px;paddin
 .progress-top{height:3px;background:var(--line);flex:none}
 .progress-top i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--gold));box-shadow:0 0 12px rgba(255,208,0,.6);transition:width .8s var(--ease)}
 
-/* Views */
 #lessonView{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1fr) 6px var(--playW,440px);transition:grid-template-columns .4s var(--ease)}
 #lessonView.collapsed{grid-template-columns:0 minmax(260px,1fr) 6px var(--playW,440px)}
 #playView{flex:1;min-height:0;display:none;flex-direction:column}
@@ -78,7 +75,10 @@ html[data-mode=play] #playView{display:flex}
 
 .sidebar{border-right:1px solid var(--panel-line);display:flex;flex-direction:column;min-width:0;overflow:hidden;transition:opacity .3s,transform .4s var(--ease);background:var(--panel)}
 #lessonView.collapsed .sidebar{opacity:0;pointer-events:none}
-.side-head{padding:16px 16px 10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+.side-head{padding:14px 16px 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.track{display:flex;margin:0 12px 6px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;padding:3px}
+.track button{flex:1;background:none;border:0;color:var(--muted);padding:7px;border-radius:8px;font-size:13px;transition:all .35s var(--ease)}
+.track button.on{background:var(--gold);color:#0A0A0C;font-weight:600;box-shadow:0 0 16px rgba(255,208,0,.3)}
 .list{flex:1;overflow:auto;padding:4px 10px 12px}
 .sec{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin:14px 8px 6px}
 .item{width:100%;display:flex;align-items:center;gap:10px;background:none;border:1px solid transparent;border-radius:10px;padding:9px 10px;color:var(--text);text-align:left;font-size:14px;transition:all .3s var(--ease)}
@@ -107,7 +107,6 @@ h1{font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-.01em}
 .status{margin-top:12px;font-size:13px;color:var(--muted)}
 .status.done{color:var(--gold)}
 
-/* Buttons */
 .btn{background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 13px;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:all .3s var(--ease);position:relative;white-space:nowrap}
 .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);box-shadow:0 0 14px rgba(255,208,0,.18)}
 .btn.primary{background:linear-gradient(180deg,#FFE44D,var(--gold) 55%,#D9A900);color:#0A0A0C;border-color:var(--gold);font-weight:600;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
@@ -127,7 +126,6 @@ h1{font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-.01em}
 .drawer .row{display:flex;gap:8px;margin-bottom:10px}
 .drawer pre{margin:8px 0 0;background:#0A0A0C;border:1px solid var(--line);border-radius:10px;padding:12px;font:13px/1.6 var(--mono);white-space:pre;overflow:auto}
 
-/* Editor (shared) */
 .editor{flex:1 1 60%;min-height:200px;display:flex;overflow:auto;background:#0E0E12;transition:box-shadow .3s var(--ease)}
 .editor:focus-within{box-shadow:inset 0 0 0 1px var(--gold),0 0 26px rgba(255,208,0,.16)}
 .ed{position:relative;display:flex;min-height:100%;font-family:var(--mono);font-size:var(--fs)}
@@ -145,7 +143,6 @@ h1{font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-.01em}
 .uline{position:absolute;left:0;right:0;height:22px;pointer-events:none;border-bottom:2px dotted var(--bad)}
 .hl .kw{color:var(--gold);font-weight:600}.hl .st{color:var(--amber)}.hl .cm{color:#6B6B78;font-style:italic}.hl .pp{color:#E8C75A}.hl .nm{color:#FFB86B}.hl .bi{color:#FFE58A}
 
-/* Playground */
 .pg-main{flex:1;min-height:0;display:grid;grid-template-columns:1fr minmax(300px,40%)}
 .pg-side{display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--panel-line)}
 .tabs2{display:flex;border-bottom:1px solid var(--line)}
@@ -154,7 +151,7 @@ h1{font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-.01em}
 .badge-n{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:var(--bad);color:#0A0A0C;font-size:11px;font-weight:700;margin-left:6px;vertical-align:1px}
 .badge-n.zero{display:none}
 .pane{flex:1;overflow:auto;min-height:0}
-#consoleOut{padding:12px 14px;font:13px/1.65 var(--mono)}
+#consoleOut,#lOut{padding:12px 14px;font:13px/1.65 var(--mono)}
 .ln{white-space:pre-wrap;word-break:break-word}
 .ln.ok{color:var(--gold)}.ln.err{color:var(--bad)}.ln.info{color:var(--muted)}.ln.out{color:var(--text)}
 .card-err{border:1px solid rgba(255,107,94,.35);border-radius:12px;padding:12px 14px;margin:10px;background:rgba(255,107,94,.05)}
@@ -168,11 +165,9 @@ h1{font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-.01em}
 .statusbar b{color:var(--gold);font-weight:600}
 .statusbar .coords{font-family:var(--mono)}
 
-/* Toast */
 .toast{position:fixed;right:18px;bottom:42px;z-index:60;background:rgba(19,19,23,.92);border:1px solid var(--gold);color:var(--gold);padding:12px 16px;border-radius:12px;font-size:14px;box-shadow:0 0 28px rgba(255,208,0,.28);opacity:0;transform:translateY(12px);transition:all .45s var(--ease);pointer-events:none;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .toast.show{opacity:1;transform:none}
 
-/* Overlays */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:30;opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
 .scrim.show{opacity:1;pointer-events:auto}
 .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-48%) scale(.97);opacity:0;pointer-events:none;z-index:40;width:min(520px,calc(100vw - 28px));max-height:86vh;overflow:auto;border-radius:18px;padding:22px;transition:all .4s var(--ease);box-shadow:0 30px 80px rgba(0,0,0,.6)}
@@ -250,10 +245,10 @@ select.field{background:#0A0A0C;border:1px solid var(--line);border-radius:9px;p
   </header>
   <div class="progress-top"><i id="barFill"></i></div>
 
-  <!-- LESSONS VIEW -->
   <main id="lessonView">
     <aside class="sidebar panel">
       <div class="side-head"><span>Curriculum</span><span id="progText"></span></div>
+      <div class="track"><button id="tCpp" class="on">C++</button><button id="tLua">Lua</button></div>
       <nav class="list" id="list"></nav>
       <div class="credit">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.9L22 10l-5.5 4.8L18.2 22 12 18.3 5.8 22l1.7-7.2L2 10l7.1-1.1z"/></svg>
@@ -280,12 +275,11 @@ select.field{background:#0A0A0C;border:1px solid var(--line);border-radius:9px;p
       <div class="editor" id="lEd"></div>
       <div style="flex:0 0 34%;min-height:110px;border-top:1px solid var(--line);display:flex;flex-direction:column;background:#0A0A0C">
         <div style="padding:8px 14px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)">Console</div>
-        <div id="lOut" style="flex:1;overflow:auto;padding:10px 14px;font:13px/1.65 var(--mono)"></div>
+        <div id="lOut" style="flex:1;overflow:auto"></div>
       </div>
     </section>
   </main>
 
-  <!-- PLAYGROUND VIEW -->
   <main id="playView">
     <div class="toolbar panel" style="border-width:0 0 1px">
       <button class="btn primary" id="pRun" title="Ctrl+Enter">Run</button>
@@ -364,10 +358,10 @@ select.field{background:#0A0A0C;border:1px solid var(--line);border-radius:9px;p
   <div class="row"><div>Google account<small id="acctLine">Not signed in</small></div>
     <div style="display:flex;gap:6px"><button class="btn sm" id="signInBtn">Sign in</button><button class="btn sm" id="signOutBtn">Sign out</button></div></div>
   <div class="row"><div>App version<small id="verSmall"></small></div><button class="btn sm" id="updBtn">Check for updates</button></div>
-  <div class="note" id="settingsNote" style="font-size:13px;color:var(--gold);min-height:1.4em;margin-top:6px"></div>
+  <div id="settingsNote" style="font-size:13px;color:var(--gold);min-height:1.4em;margin-top:6px"></div>
 
   <div class="sec-title">Data</div>
-  <div class="row"><div>Reset progress<small>Clears completed lessons. Code is kept.</small></div>
+  <div class="row"><div>Reset progress<small>Clears completed C++ and Lua lessons. Code is kept.</small></div>
     <div style="position:relative"><button class="btn sm" id="resetProg">Reset progress<span class="tip">Click again to confirm</span></button></div></div>
   <div class="row"><div>Saved data<small>Code, progress, and settings save automatically on this device.</small></div></div>
 
@@ -376,12 +370,10 @@ select.field{background:#0A0A0C;border:1px solid var(--line);border-radius:9px;p
 </div>
 
 <aside class="sheet panel" id="sheet" aria-label="Quick reference">
-  <div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:17px">C++ quick reference</b><button class="icon-btn" id="sheetClose" aria-label="Close">×</button></div>
+  <div style="display:flex;align-items:center;justify-content:space-between"><b id="sheetTitle" style="font-size:17px">C++ quick reference</b><button class="icon-btn" id="sheetClose" aria-label="Close">×</button></div>
   <input id="cheatSearch" placeholder="Search syntax, operators, library..." style="margin-top:14px">
   <div class="cheat" id="cheatList"></div>
 </aside>
-
-<div class="panel" style="display:none"></div>
 
 <script>
 const APP_VERSION = window.AndroidBridge ? window.AndroidBridge.getVersion() : 'web preview';
@@ -398,7 +390,7 @@ function saveSettings(){ store.set('settings', S); }
 
 /* ==================== C++ lessons ==================== */
 const DEFAULT_STARTER = '#include <iostream>\n\nint main() {\n    \n    return 0;\n}';
-const LESSONS = [
+const CPP_LESSONS = [
   { id:'hello', sec:'Basics', title:'Hello, World',
     intro:'Every C++ program starts at main(). std::cout sends text to the terminal, and << sends each piece of output.',
     code:`#include <iostream>
@@ -592,7 +584,91 @@ t.join();` },
 }` }
 ];
 
-const CHEAT = [
+/* ==================== Lua lessons ==================== */
+const LUA_STARTER = '-- Write your code here\n';
+const LUA_LESSONS = [
+  { id:'lvars', sec:'Basics', title:'Variables & Types',
+    intro:'Lua variables are dynamically typed: a variable can hold a number, string, boolean, table, or nil. Use local to keep a variable inside its block.',
+    code:`local name = "Lua"
+local version = 5.4
+local ready = true
+local nothing = nil
+print(name, version, ready, nothing)`,
+    goal:'Create a local variable name set to "Lua" and a local variable version set to 5.4.', must:['local name = "Lua"','local version = 5.4'],
+    hint:'local name = "..." creates a string. Numbers need no quotes.',
+    solution:`local name = "Lua"
+local version = 5.4
+print(name, version)` },
+  { id:'lloops', sec:'Basics', title:'Conditions & Loops',
+    intro:'if ... then ... end runs code on a condition. A numeric for loop counts from a start to an end value. Every block closes with end.',
+    code:`for i = 1, 3 do
+  if i % 2 == 0 then
+    print(i, "even")
+  else
+    print(i, "odd")
+  end
+end`,
+    goal:'Write a for loop that counts i from 1 to 5 using do and end.', must:['for i = 1, 5 do'],
+    hint:'for i = 1, 5 do ... end',
+    solution:`for i = 1, 5 do
+  print(i)
+end` },
+  { id:'lfuncs', sec:'Basics', title:'Functions',
+    intro:'Functions are values in Lua. Use local function to name one, and return to send a result back.',
+    code:`local function add(a, b)
+  return a + b
+end
+print(add(2, 3))`,
+    goal:'Write a local function add(a, b) that returns a + b.', must:['local function add(a, b)','return a + b'],
+    hint:'local function add(a, b) ... return a + b ... end',
+    solution:`local function add(a, b)
+  return a + b
+end` },
+  { id:'ltables', sec:'Data', title:'Tables',
+    intro:'A table is the only data structure in Lua. A list is a table with numbers as keys, a record uses names as keys, and # gives the number of items in a list.',
+    code:`local fruits = {"apple", "banana"}
+local prices = {apple = 2, banana = 3}
+print(#fruits, prices.apple)`,
+    goal:'Create a table named fruits with "apple" and "pear", then print its length with #fruits.', must:['local fruits = {','#fruits'],
+    hint:'local fruits = {"apple", "pear"} then print(#fruits)',
+    solution:`local fruits = {"apple", "pear"}
+print(#fruits)` },
+  { id:'lmeta', sec:'OOP', title:'Metatables & __index',
+    intro:'A metatable changes how a table behaves. Setting __index to the table itself lets missing lookups fall back to it, which is how Lua builds classes.',
+    code:`local Point = {}
+Point.__index = Point
+
+local p = setmetatable({x = 1}, Point)
+print(p.x)`,
+    goal:'Create a table Point, set Point.__index = Point, then create p with setmetatable.', must:['Point.__index = Point','setmetatable('],
+    hint:'local Point = {}; Point.__index = Point; setmetatable({}, Point)',
+    solution:`local Point = {}
+Point.__index = Point
+local p = setmetatable({}, Point)` },
+  { id:'lclass', sec:'OOP', title:'Classes & Methods',
+    intro:'With a colon, function Counter:increment() passes the table in as self, so each object keeps its own data.',
+    code:`local Counter = {}
+Counter.__index = Counter
+
+function Counter.new()
+  return setmetatable({value = 0}, Counter)
+end
+
+function Counter:increment()
+  self.value = self.value + 1
+end
+
+local c = Counter.new()
+c:increment()
+print(c.value)`,
+    goal:'Add a method function Counter:increment() that adds 1 to self.value.', must:['function Counter:increment()','self.value = self.value + 1'],
+    hint:'Use function Counter:increment() and inside it write self.value = self.value + 1',
+    solution:`function Counter:increment()
+  self.value = self.value + 1
+end` }
+];
+
+const CPP_CHEAT = [
   ['Include','#include <iostream>','Bring in the standard I/O library'],
   ['Output','std::cout << x << std::endl;','Print a value and a newline'],
   ['Input','std::cin >> x;','Read a value into x'],
@@ -619,6 +695,24 @@ const CHEAT = [
   ['Operators','a && b   a || b   !a','Logical and, or, not'],
   ['Compare','a == b   a != b   a <= b','Equal, not equal, at most'],
   ['Increment','x++;  ++x;  x += 1;','Add one or add a value'],
+];
+const LUA_CHEAT = [
+  ['Local','local x = 5','Variable limited to its block'],
+  ['If','if x > 3 then ... else ... end','Run code on a condition'],
+  ['For','for i = 1, 5 do ... end','Count from 1 to 5'],
+  ['While','while cond do ... end','Repeat while cond is true'],
+  ['Function','local function f(a) return a end','Named, reusable code'],
+  ['Table','local t = {1, 2, name = "x"}','List and record in one'],
+  ['Length','#t','Number of items in a list'],
+  ['Field','t.name   t["name"]','Read or set a field'],
+  ['Metatable','setmetatable(t, mt)','Change how a table behaves'],
+  ['Method','function C:m() self.v = 1 end','self is the table itself'],
+  ['Concat','"a" .. "b"','Join strings'],
+  ['Print','print("hi", x)','Show values in the console'],
+  ['Comment','-- like this','Ignored by Lua'],
+  ['Logic','not a   a and b   a or b','Not, and, or'],
+  ['Compare','a == b   a ~= b   a <= b','Equal, not equal, at most'],
+  ['Math','math.floor(x)  math.max(a, b)','Built-in math helpers'],
 ];
 
 /* ==================== Highlighters ==================== */
@@ -649,29 +743,25 @@ function hlLua(src){
 /* ==================== Editor factory ==================== */
 function makeEditor(mount, opts){
   mount.innerHTML = '<div class="ed"><div class="gut"></div><div class="wrap"><div class="band"></div><div class="uls"></div><pre class="hl" aria-hidden="true"></pre><textarea spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Code editor"></textarea></div></div>';
-  const ed = mount.querySelector('.ed'), gut = mount.querySelector('.gut'), wrap = mount.querySelector('.wrap');
+  const gut = mount.querySelector('.gut'), wrap = mount.querySelector('.wrap');
   const band = mount.querySelector('.band'), uls = mount.querySelector('.uls'), hl = mount.querySelector('.hl'), ta = mount.querySelector('textarea');
   mount.style.setProperty('--fs', S.font + 'px');
   mount.style.setProperty('--tab', S.tab);
-  let errLines = new Set(), lastN = 0;
+  let errLines = new Set();
 
   function refresh(){
     const src = ta.value, n = src.split('\n').length;
     hl.innerHTML = opts.hl(src) + '\n';
     const h = n * LH + 24 + 'px';
     ta.style.height = hl.style.height = wrap.style.height = h;
-    if (n !== lastN || true) {
-      gut.innerHTML = Array.from({length:n}, (_,i) => '<div class="' + (errLines.has(i+1) ? 'e' : '') + '" data-l="' + (i+1) + '">' + (i+1) + '</div>').join('');
-    }
-    lastN = n;
+    gut.innerHTML = Array.from({length:n}, (_,i) => '<div class="' + (errLines.has(i+1) ? 'e' : '') + '" data-l="' + (i+1) + '">' + (i+1) + '</div>').join('');
     uls.innerHTML = Array.from(errLines).map(l => '<div class="uline" style="top:' + (12 + (l-1)*LH) + 'px"></div>').join('');
     moveBand();
     if (opts.onChange) opts.onChange(src);
   }
   function cursor(){
     const s = ta.selectionStart, before = ta.value.slice(0, s);
-    const line = before.split('\n').length, col = s - (before.lastIndexOf('\n') + 1) + 1;
-    return {line, col};
+    return { line: before.split('\n').length, col: s - (before.lastIndexOf('\n') + 1) + 1 };
   }
   function moveBand(){
     const c = cursor();
@@ -682,7 +772,7 @@ function makeEditor(mount, opts){
   function setValue(v){ ta.value = v; ta.selectionStart = ta.selectionEnd = 0; refresh(); }
   function setCaret(pos){ ta.selectionStart = ta.selectionEnd = pos; moveBand(); }
   function edit(v, caret){ ta.value = v; setCaret(caret); refresh(); }
-  function indentUnit(){ return ' '.repeat(S.tab); }
+  const indentUnit = () => ' '.repeat(S.tab);
 
   const PAIRS = {'(':')','[':']','{':'}','"':'"',"'":"'"};
   const CLOSERS = [')',']','}','"',"'"];
@@ -692,12 +782,11 @@ function makeEditor(mount, opts){
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (opts.onSave) opts.onSave(); return; }
     if (e.key === 'Tab') {
       e.preventDefault();
-      const u = indentUnit();
       if (e.shiftKey) {
         const ls = v.lastIndexOf('\n', s - 1) + 1;
         const m = v.slice(ls).match(new RegExp('^ {1,' + S.tab + '}'));
         if (m) edit(v.slice(0, ls) + v.slice(ls + m[0].length), Math.max(ls, s - m[0].length));
-      } else edit(v.slice(0, s) + u + v.slice(en), s + u.length);
+      } else edit(v.slice(0, s) + indentUnit() + v.slice(en), s + S.tab);
       return;
     }
     if (e.key === 'Enter') {
@@ -707,9 +796,10 @@ function makeEditor(mount, opts){
       const before = v[s-1], after = v[en];
       if (before === '{' && after === '}') {
         const ins = '\n' + indent + indentUnit() + '\n' + indent;
-        edit(v.slice(0, s) + ins + v.slice(en), s + 1 + indent.length + indentUnit().length);
+        edit(v.slice(0, s) + ins + v.slice(en), s + 1 + indent.length + S.tab);
       } else {
-        const ins = '\n' + indent + (before === '{' || before === ':' || /\b(then|do)$/.test(v.slice(0, s)) ? indentUnit() : '');
+        const extra = (before === '{' || /\b(then|do|function)$/.test(v.slice(0, s).trimEnd())) ? indentUnit() : '';
+        const ins = '\n' + indent + extra;
         edit(v.slice(0, s) + ins + v.slice(en), s + ins.length);
       }
       return;
@@ -730,14 +820,19 @@ function makeEditor(mount, opts){
   gut.classList.toggle('off', !S.lineNums);
 
   return {
-    get value(){ return ta.value; }, setValue, refresh,
+    get value(){ return ta.value; }, setValue,
     focus(){ ta.focus(); },
-    goto(line){ const lines = ta.value.split('\n'); let pos = 0; for (let i = 0; i < Math.min(line-1, lines.length); i++) pos += lines[i].length + 1; ta.focus(); ta.selectionStart = ta.selectionEnd = pos; ta.scrollIntoView({block:'nearest'}); moveBand(); const p = mount.closest('.editor') || mount; p.scrollTop = Math.max(0, (line-3) * LH); },
+    goto(line){
+      const lines = ta.value.split('\n'); let pos = 0;
+      for (let i = 0; i < Math.min(line - 1, lines.length); i++) pos += lines[i].length + 1;
+      ta.focus(); ta.selectionStart = ta.selectionEnd = pos; moveBand();
+      const scroller = mount.closest('.editor') || mount;
+      scroller.scrollTop = Math.max(0, (line - 3) * LH);
+    },
     setErrors(lines){ errLines = new Set(lines); refresh(); },
     setFont(px){ mount.style.setProperty('--fs', px + 'px'); },
     setTab(n){ mount.style.setProperty('--tab', n); },
-    setLineNums(on){ gut.classList.toggle('off', !on); },
-    cursor
+    setLineNums(on){ gut.classList.toggle('off', !on); }
   };
 }
 
@@ -963,7 +1058,6 @@ class Parser {
   }
 }
 
-/* Runtime */
 class Table {
   constructor(){ this.m = new Map(); this.meta = null; }
   get(k){
@@ -1214,7 +1308,6 @@ function runLua(src){
   return OUT;
 }
 
-/* Linter: bracket matching + parser errors */
 const CLOSE_OF = {'(':')','[':']','{':'}'};
 function issue(line, type, msg){ return {line, type, msg, fix: FIX[type] || FIX['Syntax error']}; }
 function lintLua(src){
@@ -1228,8 +1321,10 @@ function lintLua(src){
     else if (pairs[tk.t]) {
       const top = open[open.length - 1];
       if (!top) out.push(issue(tk.line, 'Mismatched bracket', "'" + tk.t + "' has no matching opening bracket."));
-      else if (top.t !== pairs[tk.t]) out.push(issue(tk.line, 'Mismatched bracket', "'" + tk.t + "' doesn't match the '" + top.t + "' from line " + top.line + '. Use ' + CLOSE_OF[top.t] + ' there.'));
-      if (top && top.t === pairs[tk.t]) open.pop(); else if (top) open.pop();
+      else {
+        if (top.t !== pairs[tk.t]) out.push(issue(tk.line, 'Mismatched bracket', "'" + tk.t + "' doesn't match the '" + top.t + "' from line " + top.line + '. Use ' + CLOSE_OF[top.t] + ' there.'));
+        open.pop();
+      }
     }
   }
   for (const tk of open) out.push(issue(tk.line, 'Unclosed bracket', "'" + tk.t + "' on line " + tk.line + ' is never closed.'));
@@ -1241,7 +1336,6 @@ function lintLua(src){
   return out.sort((a, b) => a.line - b.line);
 }
 
-/* C++ lesson checks */
 function cppLint(code){
   const issues = [], c = code.replace(/"(?:\\.|[^"\\])*"/g,'""').replace(/\/\/.*/g,''), lines = c.split('\n');
   const cnt = (s, ch) => s.split(ch).length - 1;
@@ -1275,7 +1369,7 @@ function fallbackCopy(text, cb){
   const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select();
   try { document.execCommand('copy'); } catch(e){} t.remove(); cb();
 }
-function twoStep(btn, onConfirm, label){
+function twoStep(btn, onConfirm){
   if (!btn.classList.contains('armed')) {
     btn.classList.add('armed'); clearTimeout(btn._t);
     btn._t = setTimeout(() => btn.classList.remove('armed'), 3000);
@@ -1298,34 +1392,59 @@ function applySettings(){
   $('fsRange').value = S.font; $('fsLabel').textContent = S.font + 'px';
   $('tabSel').value = String(S.tab);
   $('lnToggle').checked = S.lineNums; $('acToggle').checked = S.autoClose; $('lintToggle').checked = S.lint;
-  if (lessonEd) { lessonEd.setFont(S.font); lessonEd.setTab(S.tab); lessonEd.setLineNums(S.lineNums); }
-  if (playEd) { playEd.setFont(S.font); playEd.setTab(S.tab); playEd.setLineNums(S.lineNums); }
+  [lessonEd, playEd].forEach(ed => { if (ed) { ed.setFont(S.font); ed.setTab(S.tab); ed.setLineNums(S.lineNums); } });
 }
 
-/* ==================== Lessons mode ==================== */
-const LSTATE = {};
-let done = new Set(store.get('done', []));
+/* ==================== Lessons mode (C++ and Lua tracks) ==================== */
+let track = store.get('track', 'cpp');
+const doneSets = { cpp: new Set(store.get('done', [])), lua: new Set(store.get('doneLua', [])) };
+const LESSONS = () => track === 'lua' ? LUA_LESSONS : CPP_LESSONS;
+const D = () => doneSets[track];
 let cur = 0;
 let lessonEd = null;
-function unlocked(i){ return i === 0 || done.has(i-1) || done.has(i); }
+let saveT = null;
+const codeKey = () => 'code.' + track + '.' + LESSONS()[cur].id;
+function unlocked(i){ return i === 0 || D().has(i-1) || D().has(i); }
+function saveDone(){ store.set(track === 'lua' ? 'doneLua' : 'done', [...D()]); }
+function saveLessonCode(){ if (lessonEd) store.set(codeKey(), lessonEd.value); }
+function firstOpen(){
+  const list = LESSONS();
+  const i = list.findIndex((L, idx) => unlocked(idx) && !D().has(idx));
+  return i < 0 ? list.length - 1 : i;
+}
+function mountLessonEditor(){
+  const lua = track === 'lua';
+  lessonEd = makeEditor($('lEd'), {
+    hl: lua ? hlLua : hlCpp,
+    onChange: () => { clearTimeout(saveT); saveT = setTimeout(saveLessonCode, 400); }
+  });
+}
+function loadLessonCode(){
+  const L = LESSONS()[cur];
+  lessonEd.setValue(store.get(codeKey(), track === 'lua' ? LUA_STARTER : DEFAULT_STARTER));
+}
 function renderList(){
+  const list = LESSONS();
   let html = '', last = '';
-  LESSONS.forEach((L, i) => {
+  list.forEach((L, i) => {
     if (L.sec !== last) { html += '<div class="sec">' + esc(L.sec) + '</div>'; last = L.sec; }
-    const ok = unlocked(i), isDone = done.has(i);
+    const ok = unlocked(i), isDone = D().has(i);
     html += '<button class="item ' + (isDone ? 'done ' : '') + (i === cur ? 'cur' : '') + '" data-i="' + i + '" ' + (ok ? '' : 'disabled') + '>' +
       '<span class="dot">' + (isDone ? '\u2713' : (ok ? (i+1) : '\u2022')) + '</span><span>' + esc(L.title) + '</span></button>';
   });
   $('list').innerHTML = html;
-  $('progText').textContent = done.size + '/' + LESSONS.length;
-  $('barFill').style.width = Math.round(100 * done.size / LESSONS.length) + '%';
+  $('progText').textContent = D().size + '/' + list.length;
+  $('barFill').style.width = Math.round(100 * D().size / list.length) + '%';
   $('list').querySelectorAll('.item').forEach(b => b.onclick = () => { select(+b.dataset.i); if (isNarrow()) $('lessonView').classList.add('collapsed'); });
+  $('tCpp').classList.toggle('on', track === 'cpp');
+  $('tLua').classList.toggle('on', track === 'lua');
 }
 function renderReader(){
-  const L = LESSONS[cur], isDone = done.has(cur), hasNext = cur + 1 < LESSONS.length;
-  $('reader').innerHTML = '<div class="kicker">' + esc(L.sec) + ' \u00b7 Lesson ' + (cur+1) + ' of ' + LESSONS.length + '</div>' +
+  const list = LESSONS(), L = list[cur], isDone = D().has(cur), hasNext = cur + 1 < list.length;
+  const hl = track === 'lua' ? hlLua : hlCpp;
+  $('reader').innerHTML = '<div class="kicker">' + (track === 'lua' ? 'Lua' : 'C++') + ' \u00b7 ' + esc(L.sec) + ' \u00b7 Lesson ' + (cur+1) + ' of ' + list.length + '</div>' +
     '<h1>' + esc(L.title) + '</h1><p class="lead">' + esc(L.intro) + '</p>' +
-    '<div class="codebox"><pre>' + hlCpp(L.code) + '</pre><button class="copy-mini" id="copyExample">Copy</button></div>' +
+    '<div class="codebox"><pre>' + hl(L.code) + '</pre><button class="copy-mini" id="copyExample">Copy</button></div>' +
     '<div class="challenge"><h3>Challenge / Goal</h3><p>' + esc(L.goal) + '</p>' +
     '<div class="status ' + (isDone ? 'done' : '') + '">' + (isDone ? '\u2726 Completed' : 'Write your solution in the editor, then press Run.') + '</div></div>' +
     '<div class="nav-row">' + (hasNext && isDone ? '<button class="btn primary" id="nextBtn">Next lesson \u2192</button>' : '') + '</div>';
@@ -1336,33 +1455,64 @@ function select(i){
   if (!unlocked(i)) return;
   saveLessonCode();
   cur = i;
-  lessonEd.setValue(store.get('code.' + LESSONS[cur].id, LESSONS[cur].starter || DEFAULT_STARTER));
+  loadLessonCode();
   $('lDrawer').hidden = true; $('lHintText').textContent = ''; $('lSolText').hidden = true;
-  renderList(); renderReader(); lOut.clear(); lOut.line('Lesson loaded. Write your code and press Run.', 'info');
+  renderList(); renderReader(); lOut.clear();
+  lOut.line('Lesson loaded. Write your code and press Run.', 'info');
 }
-function saveLessonCode(){ if (lessonEd) store.set('code.' + LESSONS[cur].id, lessonEd.value); }
+function setTrack(t){
+  saveLessonCode();
+  track = t; store.set('track', t);
+  cur = firstOpen();
+  mountLessonEditor(); loadLessonCode(); applySettings();
+  renderList(); renderReader();
+  lOut.clear(); lOut.line((t === 'lua' ? 'Lua' : 'C++') + ' track. Press Run to check your code.', 'info');
+  $('sheetTitle').textContent = (t === 'lua' ? 'Lua' : 'C++') + ' quick reference';
+  renderCheat($('cheatSearch').value);
+}
 const lOut = {
   clear(){ $('lOut').innerHTML = ''; },
   line(text, kind){ const d = document.createElement('div'); d.className = 'ln ' + (kind || 'info'); d.textContent = text; $('lOut').appendChild(d); $('lOut').scrollTop = 1e6; }
 };
 function runLesson(){
-  const code = lessonEd.value;
-  lOut.clear(); lOut.line('$ check ' + LESSONS[cur].title, 'info');
-  const issues = cppLint(code);
-  if (issues.length) issues.forEach(i => lOut.line('! Line ' + i.line + ': ' + i.msg, 'err'));
-  else lOut.line('No obvious problems found.', 'ok');
-  const miss = missing(code, LESSONS[cur].must);
+  const L = LESSONS()[cur], code = lessonEd.value;
+  lOut.clear(); lOut.line('$ check ' + L.title, 'info');
+  if (track === 'lua') {
+    const issues = lintLua(code);
+    if (issues.length) {
+      issues.forEach(i => lOut.line('! Line ' + i.line + ': ' + i.msg, 'err'));
+      lOut.line('Fix these first, then run again.', 'info');
+      return;
+    }
+    lOut.line('No syntax errors found.', 'ok');
+    const t0 = performance.now();
+    try {
+      const out = runLua(code);
+      out.forEach(o => lOut.line(o.s, 'out'));
+      if (!out.length) lOut.line('(no output)', 'info');
+      lOut.line('Finished in ' + (performance.now() - t0).toFixed(2) + ' ms', 'info');
+    } catch (e) {
+      if (!(e instanceof LuaError)) throw e;
+      lOut.line('! Line ' + e.line + ': ' + e.message, 'err');
+      return;
+    }
+  } else {
+    const issues = cppLint(code);
+    if (issues.length) issues.forEach(i => lOut.line('! Line ' + i.line + ': ' + i.msg, 'err'));
+    else lOut.line('No obvious problems found.', 'ok');
+  }
+  const miss = missing(code, L.must);
   if (miss.length === 0) {
     lOut.line('\u2726 Challenge passed!', 'ok');
-    if (!done.has(cur)) {
-      done.add(cur); store.set('done', [...done]);
+    if (!D().has(cur)) {
+      D().add(cur); saveDone();
       toast('Challenge complete. Next lesson unlocked.');
       const idx = cur;
       renderList(); renderReader();
       setTimeout(() => { const b = document.querySelector('.item[data-i="' + (idx+1) + '"]'); if (b) b.classList.add('unlock'); }, 150);
     }
   } else lOut.line('Not there yet. Keep going, or open the Hint.', 'err');
-  lOut.line('Note: C++ is checked here, not compiled.', 'info');
+  if (track === 'cpp') lOut.line('Note: C++ is checked here, not compiled.', 'info');
 }
 
 /* ==================== Playground (Lua++) ==================== */
@@ -1374,25 +1524,24 @@ const TEMPLATES = {
 };
 let playEd = null, playTimer = null, lastIssues = [], probTab = 'console';
 const pOut = {
-  el(){ return $('consoleOut'); },
-  clear(){ this.el().innerHTML = ''; },
-  line(text, kind){ const d = document.createElement('div'); d.className = 'ln ' + (kind || 'info'); d.textContent = text; this.el().appendChild(d); }
+  clear(){ $('consoleOut').innerHTML = ''; },
+  line(text, kind){ const d = document.createElement('div'); d.className = 'ln ' + (kind || 'info'); d.textContent = text; $('consoleOut').appendChild(d); }
 };
 function setProblems(list){
   lastIssues = list;
   const b = $('probBadge');
   b.textContent = list.length; b.classList.toggle('zero', list.length === 0);
-  playEd.setErrors(list.map(i => i.line));
+  if (playEd) playEd.setErrors(list.map(i => i.line));
   renderProblems();
 }
 function renderProblems(){
   const box = $('probList');
   if (!lastIssues.length) { box.innerHTML = '<div class="empty">No problems. Nice work.</div>'; return; }
-  box.innerHTML = lastIssues.map((p, idx) =>
+  box.innerHTML = lastIssues.map(p =>
     '<div class="card-err"><div class="top"><span class="type">' + esc(p.type) + '</span><span class="ln-no">Line ' + p.line + '</span></div>' +
     '<p>' + esc(p.msg) + '</p><div class="fix">' + esc(p.fix) + '</div>' +
     '<button class="btn sm" data-jump="' + p.line + '">Jump to line</button></div>').join('');
-  box.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => { playEd.goto(+b.dataset.jump); });
+  box.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => playEd.goto(+b.dataset.jump));
 }
 function showTab(which){
   probTab = which;
@@ -1401,11 +1550,7 @@ function showTab(which){
   $('paneConsole').hidden = which !== 'console';
   $('paneProblems').hidden = which !== 'problems';
 }
-function lintNow(){
-  const issues = S.lint || true ? lintLua(playEd.value) : [];
-  setProblems(issues);
-  return issues;
-}
+function lintNow(){ const issues = lintLua(playEd.value); setProblems(issues); return issues; }
 function scheduleLint(){
   if (!S.lint) return;
   clearTimeout(playTimer);
@@ -1424,25 +1569,23 @@ function runPlayground(){
   const t0 = performance.now();
   try {
     const out = runLua(src);
-    const ms = performance.now() - t0;
     out.forEach(o => pOut.line(o.s, 'out'));
     if (!out.length) pOut.line('(no output)', 'info');
-    pOut.line('Finished in ' + ms.toFixed(2) + ' ms', 'ok');
+    pOut.line('Finished in ' + (performance.now() - t0).toFixed(2) + ' ms', 'ok');
+    showTab('console');
   } catch (e) {
     if (!(e instanceof LuaError)) throw e;
-    const ms = performance.now() - t0;
     pOut.line('Line ' + e.line + ': ' + e.message, 'err');
-    pOut.line('Stopped after ' + ms.toFixed(2) + ' ms', 'info');
+    pOut.line('Stopped after ' + (performance.now() - t0).toFixed(2) + ' ms', 'info');
     setProblems([issue(e.line, e.kind, e.message)]);
     showTab('problems');
-    return;
   }
-  showTab('console');
 }
+let saveTP = null;
 function setupPlayground(){
   playEd = makeEditor($('pEd'), {
     hl: hlLua,
-    onChange: () => { scheduleLint(); if (!S.lint) playEd.setErrors([]); saveTimer(); },
+    onChange: () => { scheduleLint(); clearTimeout(saveTP); saveTP = setTimeout(() => store.set('pg.code', playEd.value), 400); },
     onCursor: (l, c) => { $('coords').textContent = 'Ln ' + l + ' : Col ' + c; },
     onRun: runPlayground,
     onSave: () => { store.set('pg.code', playEd.value); toast('Progress saved'); },
@@ -1451,10 +1594,8 @@ function setupPlayground(){
   playEd.setValue(store.get('pg.code', TEMPLATES.hello));
   setProblems(lintLua(playEd.value));
 }
-let saveT = null;
-function saveTimer(){ clearTimeout(saveT); saveT = setTimeout(() => store.set('pg.code', playEd.value), 400); }
 
-/* ==================== Mode switch, panels ==================== */
+/* ==================== Mode, panels, overlays ==================== */
 function setMode(m){
   document.documentElement.dataset.mode = m;
   $('app').dataset.mode = m;
@@ -1464,103 +1605,13 @@ function setMode(m){
   if (m === 'play' && playEd) setTimeout(() => playEd.focus(), 50);
 }
 const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
-
-/* ==================== Init ==================== */
-$('verLabel').textContent = 'v' + APP_VERSION;
-$('aboutVer').textContent = APP_VERSION;
-$('verSmall').textContent = 'Version ' + APP_VERSION;
-
-// Lessons
-lessonEd = makeEditor($('lEd'), {
-  hl: hlCpp,
-  onChange: () => { clearTimeout(saveT); saveT = setTimeout(saveLessonCode, 400); }
-});
-(function(){ cur = LESSONS.findIndex((L, i) => unlocked(i) && !done.has(i)); if (cur < 0) cur = LESSONS.length - 1; })();
-renderList(); renderReader();
-lessonEd.setValue(store.get('code.' + LESSONS[cur].id, LESSONS[cur].starter || DEFAULT_STARTER));
-lOut.line('Welcome to cppforge. Press Ctrl+Enter to run your code.', 'info');
-
-// Playground
-setupPlayground();
-showTab('console');
-pOut.line('Lua++ playground ready. Press Ctrl+Enter to run.', 'info');
-$('pTpl').onchange = e => {
-  const k = e.target.value; if (!k) return;
-  playEd.setValue(TEMPLATES[k]); store.set('pg.code', TEMPLATES[k]); setProblems(lintLua(TEMPLATES[k]));
-  pOut.clear(); pOut.line('Loaded template: ' + e.target.options[e.target.selectedIndex].text, 'info');
-  e.target.value = '';
-};
-
-// Mode & header
-$('modeLessons').onclick = () => setMode('lessons');
-$('modePlay').onclick = () => setMode('play');
-setMode(store.get('mode', 'lessons'));
-
-// Lesson toolbar
-$('lRun').onclick = runLesson;
-$('lReset').onclick = () => twoStep($('lReset'), () => { lessonEd.setValue(LESSONS[cur].starter || DEFAULT_STARTER); saveLessonCode(); toast('Reset to starter code'); });
-$('lCopy').onclick = () => copyText(lessonEd.value, 'Code copied');
-$('lHint').onclick = () => { const d = $('lDrawer'); d.hidden = !d.hidden; };
-$('lShowHint').onclick = () => { $('lHintText').textContent = 'Hint: ' + LESSONS[cur].hint; };
-$('lShowSol').onclick = () => { $('lSolText').textContent = LESSONS[cur].solution; $('lSolText').hidden = false; };
-$('lFm').onclick = () => { S.font = Math.max(12, S.font - 1); saveSettings(); applySettings(); };
-$('lFp').onclick = () => { S.font = Math.min(20, S.font + 1); saveSettings(); applySettings(); };
-
-// Playground toolbar
-$('pRun').onclick = runPlayground;
-$('pCheck').onclick = () => {
-  const issues = lintNow();
-  if (issues.length === 0) { toast('No syntax errors found'); pOut.line('\u2713 No syntax errors found.', 'ok'); }
-  else { showTab('problems'); }
-};
-$('pClear').onclick = () => pOut.clear();
-$('pCopy').onclick = () => copyText(playEd.value, 'Code copied');
-$('pReset').onclick = () => twoStep($('pReset'), () => { playEd.setValue(TEMPLATES.hello); store.set('pg.code', TEMPLATES.hello); setProblems(lintLua(TEMPLATES.hello)); toast('Reset to starter code'); });
-$('pFm').onclick = () => { S.font = Math.max(12, S.font - 1); saveSettings(); applySettings(); };
-$('pFp').onclick = () => { S.font = Math.min(20, S.font + 1); saveSettings(); applySettings(); };
-$('tabConsole').onclick = () => showTab('console');
-$('tabProblems').onclick = () => showTab('problems');
-
-// Sidebar + splitter
-const lv = $('lessonView');
-$('sideBtn').onclick = () => { lv.classList.toggle('collapsed'); if (!isNarrow()) store.set('collapsed', lv.classList.contains('collapsed')); };
-if (isNarrow()) lv.classList.add('collapsed'); else if (store.get('collapsed', false)) lv.classList.add('collapsed');
-const split = $('split'); let dragging = false;
-split.addEventListener('pointerdown', e => { dragging = true; split.setPointerCapture(e.pointerId); });
-split.addEventListener('pointermove', e => { if (!dragging) return; const w = Math.min(Math.max(window.innerWidth - e.clientX, 300), window.innerWidth * 0.6); lv.style.setProperty('--playW', w + 'px'); });
-split.addEventListener('pointerup', () => { dragging = false; store.set('playW', parseInt(getComputedStyle(lv).getPropertyValue('--playW')) || 440); });
-const savedW = store.get('playW', 0); if (savedW && !isNarrow()) lv.style.setProperty('--playW', savedW + 'px');
-
-// Overlays
-$('aboutBtn').onclick = () => openModal('about');
-$('aboutClose').onclick = closeAll;
-$('gearBtn').onclick = () => { applySettings(); renderAccount(); openModal('settings'); };
-$('settingsClose').onclick = closeAll;
-$('scrim').onclick = closeAll;
-$('sheetBtn').onclick = () => { renderCheat(''); $('sheet').classList.add('show'); $('scrim').classList.add('show'); setTimeout(() => $('cheatSearch').focus(), 300); };
-$('sheetClose').onclick = closeAll;
 function renderCheat(q){
-  const t = q.trim().toLowerCase();
-  const rows = CHEAT.filter(r => !t || (r[0] + ' ' + r[1] + ' ' + r[2]).toLowerCase().includes(t));
+  const t = q.trim().toLowerCase(), src = track === 'lua' ? LUA_CHEAT : CPP_CHEAT;
+  const rows = src.filter(r => !t || (r[0] + ' ' + r[1] + ' ' + r[2]).toLowerCase().includes(t));
   $('cheatList').innerHTML = rows.map(r => '<div class="c"><code>' + esc(r[1]) + '</code><span>' + esc(r[0]) + ' \u00b7 ' + esc(r[2]) + '</span></div>').join('') || '<div class="c"><span>No matches.</span></div>';
 }
-$('cheatSearch').addEventListener('input', e => renderCheat(e.target.value));
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAll(); if (isNarrow()) lv.classList.add('collapsed'); } });
 
-// Settings controls
-document.querySelectorAll('[data-theme-pick]').forEach(b => b.onclick = () => { S.theme = b.dataset.themePick; saveSettings(); applySettings(); });
-$('blurSel').onchange = e => { S.blur = e.target.value; saveSettings(); applySettings(); };
-$('orbToggle').onchange = e => { S.orbs = e.target.checked; saveSettings(); applySettings(); };
-$('fsRange').oninput = e => { S.font = +e.target.value; saveSettings(); applySettings(); };
-$('tabSel').onchange = e => { S.tab = +e.target.value; saveSettings(); applySettings(); };
-$('lnToggle').onchange = e => { S.lineNums = e.target.checked; saveSettings(); applySettings(); };
-$('acToggle').onchange = e => { S.autoClose = e.target.checked; saveSettings(); applySettings(); };
-$('lintToggle').onchange = e => { S.lint = e.target.checked; saveSettings(); if (S.lint) lintNow(); else { setProblems([]); } };
-$('resetProg').onclick = () => twoStep($('resetProg'), () => {
-  done = new Set(); store.set('done', []); renderList(); renderReader(); toast('Progress reset');
-});
-
-// Account & updates (Android bridge)
+/* ==================== Account (Android bridge) ==================== */
 function renderAccount(){
   const a = window.__acct || {};
   if (a.email) $('acctLine').textContent = 'Signed in as ' + (a.name || a.email);
@@ -1572,10 +1623,96 @@ function renderAccount(){
   $('updBtn').disabled = !window.AndroidBridge;
   if (!window.AndroidBridge) $('settingsNote').textContent = 'Sign-in and updates work in the Android app.';
 }
+window.setAccount = function (o){ window.__acct = o || {}; renderAccount(); };
+
+/* ==================== Init & event wiring ==================== */
+$('verLabel').textContent = 'v' + APP_VERSION;
+$('aboutVer').textContent = APP_VERSION;
+$('verSmall').textContent = 'Version ' + APP_VERSION;
+
+cur = 0;
+mountLessonEditor();
+cur = firstOpen();
+renderList(); renderReader(); loadLessonCode();
+lOut.line('Welcome to cppforge. Press Ctrl+Enter to run your code.', 'info');
+
+setupPlayground();
+showTab('console');
+pOut.line('Lua++ playground ready. Press Ctrl+Enter to run.', 'info');
+$('pTpl').onchange = e => {
+  const k = e.target.value; if (!k) return;
+  playEd.setValue(TEMPLATES[k]); store.set('pg.code', TEMPLATES[k]); setProblems(lintLua(TEMPLATES[k]));
+  pOut.clear(); pOut.line('Loaded template: ' + e.target.options[e.target.selectedIndex].text, 'info');
+  e.target.value = '';
+};
+
+$('modeLessons').onclick = () => setMode('lessons');
+$('modePlay').onclick = () => setMode('play');
+setMode(store.get('mode', 'lessons'));
+
+$('tCpp').onclick = () => { if (track !== 'cpp') setTrack('cpp'); };
+$('tLua').onclick = () => { if (track !== 'lua') setTrack('lua'); };
+
+$('lRun').onclick = runLesson;
+$('lReset').onclick = () => twoStep($('lReset'), () => { lessonEd.setValue(track === 'lua' ? LUA_STARTER : DEFAULT_STARTER); saveLessonCode(); toast('Reset to starter code'); });
+$('lCopy').onclick = () => copyText(lessonEd.value, 'Code copied');
+$('lHint').onclick = () => { const d = $('lDrawer'); d.hidden = !d.hidden; };
+$('lShowHint').onclick = () => { $('lHintText').textContent = 'Hint: ' + LESSONS()[cur].hint; };
+$('lShowSol').onclick = () => { $('lSolText').textContent = LESSONS()[cur].solution; $('lSolText').hidden = false; };
+$('lFm').onclick = () => { S.font = Math.max(12, S.font - 1); saveSettings(); applySettings(); };
+$('lFp').onclick = () => { S.font = Math.min(20, S.font + 1); saveSettings(); applySettings(); };
+
+$('pRun').onclick = runPlayground;
+$('pCheck').onclick = () => {
+  const issues = lintNow();
+  if (issues.length === 0) { toast('No syntax errors found'); pOut.line('\u2713 No syntax errors found.', 'ok'); showTab('console'); }
+  else showTab('problems');
+};
+$('pClear').onclick = () => pOut.clear();
+$('pCopy').onclick = () => copyText(playEd.value, 'Code copied');
+$('pReset').onclick = () => twoStep($('pReset'), () => { playEd.setValue(TEMPLATES.hello); store.set('pg.code', TEMPLATES.hello); setProblems(lintLua(TEMPLATES.hello)); toast('Reset to starter code'); });
+$('pFm').onclick = () => { S.font = Math.max(12, S.font - 1); saveSettings(); applySettings(); };
+$('pFp').onclick = () => { S.font = Math.min(20, S.font + 1); saveSettings(); applySettings(); };
+$('tabConsole').onclick = () => showTab('console');
+$('tabProblems').onclick = () => showTab('problems');
+
+const lv = $('lessonView');
+$('sideBtn').onclick = () => { lv.classList.toggle('collapsed'); if (!isNarrow()) store.set('collapsed', lv.classList.contains('collapsed')); };
+if (isNarrow()) lv.classList.add('collapsed'); else if (store.get('collapsed', false)) lv.classList.add('collapsed');
+const split = $('split'); let dragging = false;
+split.addEventListener('pointerdown', e => { dragging = true; split.setPointerCapture(e.pointerId); });
+split.addEventListener('pointermove', e => { if (!dragging) return; const w = Math.min(Math.max(window.innerWidth - e.clientX, 300), window.innerWidth * 0.6); lv.style.setProperty('--playW', w + 'px'); });
+split.addEventListener('pointerup', () => { dragging = false; store.set('playW', parseInt(getComputedStyle(lv).getPropertyValue('--playW')) || 440); });
+const savedW = store.get('playW', 0); if (savedW && !isNarrow()) lv.style.setProperty('--playW', savedW + 'px');
+
+$('aboutBtn').onclick = () => openModal('about');
+$('aboutClose').onclick = closeAll;
+$('gearBtn').onclick = () => { applySettings(); renderAccount(); openModal('settings'); };
+$('settingsClose').onclick = closeAll;
+$('scrim').onclick = closeAll;
+$('sheetBtn').onclick = () => { renderCheat(''); $('sheet').classList.add('show'); $('scrim').classList.add('show'); setTimeout(() => $('cheatSearch').focus(), 300); };
+$('sheetClose').onclick = closeAll;
+$('cheatSearch').addEventListener('input', e => renderCheat(e.target.value));
+$('sheetTitle').textContent = (track === 'lua' ? 'Lua' : 'C++') + ' quick reference';
+renderCheat('');
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeAll(); if (isNarrow()) lv.classList.add('collapsed'); } });
+
+document.querySelectorAll('[data-theme-pick]').forEach(b => b.onclick = () => { S.theme = b.dataset.themePick; saveSettings(); applySettings(); });
+$('blurSel').onchange = e => { S.blur = e.target.value; saveSettings(); applySettings(); };
+$('orbToggle').onchange = e => { S.orbs = e.target.checked; saveSettings(); applySettings(); };
+$('fsRange').oninput = e => { S.font = +e.target.value; saveSettings(); applySettings(); };
+$('tabSel').onchange = e => { S.tab = +e.target.value; saveSettings(); applySettings(); };
+$('lnToggle').onchange = e => { S.lineNums = e.target.checked; saveSettings(); applySettings(); };
+$('acToggle').onchange = e => { S.autoClose = e.target.checked; saveSettings(); applySettings(); };
+$('lintToggle').onchange = e => { S.lint = e.target.checked; saveSettings(); if (S.lint) lintNow(); else setProblems([]); };
+$('resetProg').onclick = () => twoStep($('resetProg'), () => {
+  doneSets.cpp = new Set(); doneSets.lua = new Set();
+  store.set('done', []); store.set('doneLua', []);
+  cur = 0; renderList(); renderReader(); loadLessonCode(); toast('Progress reset');
+});
 $('signInBtn').onclick = () => { if (window.AndroidBridge) { window.AndroidBridge.signIn(); $('settingsNote').textContent = 'Starting sign-in...'; } };
 $('signOutBtn').onclick = () => { if (window.AndroidBridge) { window.AndroidBridge.signOut(); window.__acct = {}; renderAccount(); } };
 $('updBtn').onclick = () => { if (window.AndroidBridge) { window.AndroidBridge.checkUpdate(); $('settingsNote').textContent = 'Checking for updates...'; } };
-window.setAccount = function (o){ window.__acct = o || {}; renderAccount(); };
 
 applySettings();
 </script>
