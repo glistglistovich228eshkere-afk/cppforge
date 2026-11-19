@@ -1,6 +1,6 @@
 {
-  "version": "1.1.0",
-  "android_versionCode": 2,
+  "version": "1.2.0",
+  "android_versionCode": 3,
   "apk_url": "https://github.com/glistglistovich228eshkere-afk/cppforge/releases/latest/download/cppforge.apk",
-  "notes": "New: playground with code checks, exercises with hints, 8 lessons, and an update system."
+  "notes": "New: Lessons and Playground tabs, 12 lessons, and Google sign-in."
 }

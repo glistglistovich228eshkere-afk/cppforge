@@ -1,6 +1,6 @@
 # Maintainer: glistglistovich228eshkere-afk
 pkgname=cppforge
-pkgver=1.1.0
+pkgver=1.2.0
 pkgrel=1
 pkgdesc="A dark, typewriter-style terminal tutor for learning C++"
 arch=('any')

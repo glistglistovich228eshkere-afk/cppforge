@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Create an OAuth client of type "TVs and Limited Input devices" in Google Cloud Console.
+         Keep your real values out of git: edit this file locally only. -->
+    <string name="google_client_id">REPLACE_WITH_CLIENT_ID</string>
+    <string name="google_client_secret">REPLACE_WITH_CLIENT_SECRET</string>
+</resources>

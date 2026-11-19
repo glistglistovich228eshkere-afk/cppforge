@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""cppforge - learn C++ from your terminal: lessons, exercises, a playground, and updates."""
+"""cppforge - learn C++ from your terminal: lessons, a playground, Google sign-in, and updates."""
 import json
 import os
 import random
@@ -7,13 +7,18 @@ import re
 import shutil
 import sys
 import time
+import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 REPO_RAW = "https://raw.githubusercontent.com/glistglistovich228eshkere-afk/cppforge/main"
 VERSION_URL = REPO_RAW + "/version.json"
 SCRIPT_URL = REPO_RAW + "/cppforge.py"
+DEVICE_URL = "https://oauth2.googleapis.com/device/code"
+TOKEN_URL = "https://oauth2.googleapis.com/token"
+USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
 
 GOLD = "\033[38;2;212;175;55m"
 IVORY = "\033[38;2;236;230;214m"
@@ -26,7 +31,12 @@ RESET = "\033[0m"
 CLEAR = "\033[2J\033[H"
 
 FAST = os.environ.get("CPPFORGE_FAST") == "1" or not sys.stdout.isatty()
-PROGRESS = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share")) / "cppforge" / "progress.json"
+HOME = Path.home()
+DATA = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local/share")) / "cppforge"
+CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "cppforge"
+PROGRESS = DATA / "progress.json"
+ACCOUNT = DATA / "account.json"
+GOOGLE_CONFIG = CONFIG / "google.json"
 
 LESSONS = [
     {
@@ -58,6 +68,13 @@ LESSONS = [
         "exercise": {"prompt": "Write a for loop that counts i from 1 to 5.", "hint": "Start at 1, keep going while i <= 5, and step with ++i.", "must": ["for (int i = 1; i <= 5; ++i)"]},
     },
     {
+        "title": "While Loops",
+        "intro": "A while loop repeats as long as its condition stays true. Use it when you don't know in advance how many passes you need.",
+        "code": ["int n = 3;", "while (n > 0) {", "    std::cout << n << std::endl;", "    --n;", "}"],
+        "quiz": {"q": "When does a while loop stop?", "options": ["When the condition is false", "After one pass", "Never", "Only when n is zero"], "answer": 0, "why": "The condition is checked before each pass, and the loop stops when it is false."},
+        "exercise": {"prompt": "Write a while loop that runs while count is less than 10.", "hint": "while (condition) { ... }", "must": ["while (count < 10)"]},
+    },
+    {
         "title": "Functions",
         "intro": "A function groups code under a name. It can take inputs and return a result. Write the return type first, then the name and the parameters.",
         "code": ["int add(int a, int b) {", "    return a + b;", "}", "", "int main() {", "    std::cout << add(2, 3) << std::endl;", "}"],
@@ -72,6 +89,13 @@ LESSONS = [
         "exercise": {"prompt": "Write void reset(int& x) that sets x to 0.", "hint": "Inside the function, assign 0 to x.", "must": ["void reset(int& x)", "x = 0"]},
     },
     {
+        "title": "Input with cin",
+        "intro": "std::cin reads values typed by the user. The >> operator pulls a value from the input into a variable.",
+        "code": ["#include <iostream>", "", "int main() {", "    int age;", "    std::cin >> age;", '    std::cout << "You are " << age << std::endl;', "}"],
+        "quiz": {"q": "Which operator reads a value from std::cin into a variable?", "options": ["<<", ">>", "->", "::"], "answer": 1, "why": ">> reads from the input stream into a variable."},
+        "exercise": {"prompt": "Declare an int named age, then read it from the user with std::cin.", "hint": "int age; then std::cin >> age;", "must": ["int age", "std::cin >> age"]},
+    },
+    {
         "title": "Vectors & Strings",
         "intro": "std::vector is a resizable list, and std::string holds text. push_back adds an element to the end. Include the matching header for each.",
         "code": ["#include <string>", "#include <vector>", "", 'std::vector<std::string> names{"Ada", "Linus"};', 'names.push_back("Grace");', "for (const std::string& n : names) {", "    std::cout << n << std::endl;", "}"],
@@ -79,11 +103,25 @@ LESSONS = [
         "exercise": {"prompt": "Create a vector of strings named names and add Ada to it.", "hint": "std::vector<std::string> names; then names.push_back(...).", "must": ["std::vector<std::string> names", 'push_back("Ada")']},
     },
     {
+        "title": "Enums",
+        "intro": "An enum class is a named set of values, such as the colors or states your program can be in. It keeps those values from clashing with other names.",
+        "code": ["enum class Color { Red, Green, Blue };", "", "Color c = Color::Green;"],
+        "quiz": {"q": "How do you refer to a value of an enum class?", "options": ["Color.Red", "Color::Red", "Red", "color->Red"], "answer": 1, "why": ":: picks a value from the enum's scope."},
+        "exercise": {"prompt": "Declare an enum class named Mood with the values Happy and Sad.", "hint": "enum class Name { A, B };", "must": ["enum class Mood", "Happy", "Sad"]},
+    },
+    {
         "title": "Classes",
         "intro": "A class groups data and functions into one type. A method marked const promises not to change the object.",
         "code": ["class Dog {", "public:", "    std::string name;", "", "    void speak() const {", '        std::cout << name << " says woof" << std::endl;', "    }", "};"],
         "quiz": {"q": "Which keyword promises a method won't modify the object?", "options": ["static", "const", "final", "readonly"], "answer": 1, "why": "Placing const after the parameter list makes the method read-only."},
         "exercise": {"prompt": "Create a class Counter with a public int value and a method increment() that adds one to it.", "hint": "class Counter { public: int value; void increment() { value++; } };", "must": ["class Counter", "increment()", "value++"]},
+    },
+    {
+        "title": "Smart Pointers",
+        "intro": "A std::unique_ptr owns an object on the heap and deletes it automatically when it goes out of scope. This avoids the memory leaks that raw new and delete can cause.",
+        "code": ["#include <memory>", "", "auto p = std::make_unique<int>(42);", 'std::cout << *p << std::endl;'],
+        "quiz": {"q": "Which pointer type frees its object automatically?", "options": ["int*", "std::unique_ptr", "raw new", "void*"], "answer": 1, "why": "unique_ptr deletes the object when it goes out of scope."},
+        "exercise": {"prompt": "Create a std::unique_ptr<int> named p that holds 7, using std::make_unique.", "hint": "auto p = std::make_unique<int>(7);", "must": ["std::unique_ptr<int> p", "std::make_unique<int>(7)"]},
     },
 ]
 
@@ -93,11 +131,111 @@ TIPS = [
     ("push_back", "push_back adds one element to the end of a vector."),
     ("&", "After a type, & makes a reference: another name for the same variable."),
     ("int main", "main() is where the program starts. Return 0 for success."),
+    ("make_unique", "make_unique creates the object and returns a unique_ptr that owns it."),
 ]
 
 KEYWORDS = {"include", "int", "double", "float", "bool", "char", "auto", "void", "return", "if", "else",
-            "for", "while", "class", "public", "private", "const", "using", "namespace", "struct"}
+            "for", "while", "class", "public", "private", "const", "using", "namespace", "struct", "enum"}
 TOKEN = re.compile(r'(//.*$)|("(?:\\.|[^"\\])*")|(#\w+)|(\b\w+\b)|(\s+)|(\S)')
+
+
+# ---------- Files ----------
+def load_json(path):
+    try:
+        return json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
+def save_json(path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data))
+    os.chmod(path, 0o600)
+
+
+def load_progress():
+    return set(load_json(PROGRESS).get("done", []))
+
+
+def save_progress(done):
+    save_json(PROGRESS, {"done": sorted(done)})
+
+
+# ---------- Network ----------
+def fetch(url, timeout=4, headers=None):
+    request = urllib.request.Request(url, headers={"User-Agent": "cppforge", **(headers or {})})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read()
+
+
+def post_form(url, params):
+    body = urllib.parse.urlencode(params).encode()
+    request = urllib.request.Request(url, data=body, headers={"Content-Type": "application/x-www-form-urlencoded"})
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as err:
+        return json.loads(err.read())
+
+
+# ---------- Google sign-in (device flow) ----------
+def google_config():
+    client_id = os.environ.get("GOOGLE_CLIENT_ID")
+    secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+    if client_id and secret:
+        return client_id, secret
+    data = load_json(GOOGLE_CONFIG)
+    return data.get("client_id", ""), data.get("client_secret", "")
+
+
+def account():
+    return load_json(ACCOUNT)
+
+
+def sign_in():
+    client_id, secret = google_config()
+    if not client_id:
+        print(ROSE + f"  No Google client set. Put client_id and client_secret in {GOOGLE_CONFIG}" + RESET)
+        return
+    device = post_form(DEVICE_URL, {"client_id": client_id, "scope": "openid email profile"})
+    if "error" in device:
+        print(ROSE + "  Google said: " + device.get("error_description", device["error"]) + RESET)
+        return
+    print(IVORY + "\n  1. Open  " + GOLD + device["verification_url"] + RESET)
+    print(IVORY + "  2. Enter the code  " + BOLD + GOLD + device["user_code"] + RESET + "\n")
+    print(MUTED + "  waiting for you to approve..." + RESET)
+    interval = device.get("interval", 5)
+    deadline = time.time() + device.get("expires_in", 1800)
+    tokens = None
+    while time.time() < deadline:
+        time.sleep(interval)
+        result = post_form(TOKEN_URL, {
+            "client_id": client_id,
+            "client_secret": secret,
+            "device_code": device["device_code"],
+            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+        })
+        if "access_token" in result:
+            tokens = result
+            break
+        if result.get("error") == "slow_down":
+            interval += 5
+        elif result.get("error") != "authorization_pending":
+            print(ROSE + "  Sign-in failed: " + result.get("error_description", "unknown error") + RESET)
+            return
+    if tokens is None:
+        print(ROSE + "  Sign-in timed out. Try again." + RESET)
+        return
+    info = json.loads(fetch(USERINFO_URL, headers={"Authorization": "Bearer " + tokens["access_token"]}))
+    save_json(ACCOUNT, {"name": info.get("name", ""), "email": info.get("email", ""),
+                        "refresh_token": tokens.get("refresh_token", "")})
+    print(MINT + f"  ✦ Signed in as {info.get('name') or info.get('email')}." + RESET)
+
+
+def sign_out():
+    if ACCOUNT.exists():
+        ACCOUNT.unlink()
+    print(MUTED + "  Signed out on this device." + RESET)
 
 
 # ---------- Updates ----------
@@ -105,16 +243,9 @@ def parse_version(text):
     return tuple(int(part) for part in re.findall(r"\d+", text))[:3]
 
 
-def fetch(url, timeout=4):
-    request = urllib.request.Request(url, headers={"User-Agent": "cppforge-updater"})
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        return response.read()
-
-
 def check_for_update(timeout=4, quiet=True):
-    """Return the remote version info if a newer release exists, otherwise None."""
     try:
-        info = json.loads(fetch(VERSION_URL, timeout).decode())
+        info = json.loads(fetch(VERSION_URL, timeout))
     except Exception as exc:
         if not quiet:
             print(ROSE + f"  Could not reach the update server: {exc}" + RESET)
@@ -127,7 +258,6 @@ def check_for_update(timeout=4, quiet=True):
 
 
 def apply_update():
-    """Download the new script, check it compiles, then replace this file (keeping a backup)."""
     source = fetch(SCRIPT_URL, timeout=15)
     compile(source, "cppforge.py", "exec")
     target = Path(os.path.realpath(__file__))
@@ -198,42 +328,90 @@ def pause():
     ask("\n  [press Enter to continue]")
 
 
-def load_progress():
-    try:
-        return set(json.loads(PROGRESS.read_text()).get("done", []))
-    except (OSError, ValueError):
-        return set()
-
-
-def save_progress(done):
-    PROGRESS.parent.mkdir(parents=True, exist_ok=True)
-    PROGRESS.write_text(json.dumps({"done": sorted(done)}))
-
-
 def header(subtitle=""):
     print(CLEAR, end="")
     print(GOLD + "  ╭" + "─" * 46 + "╮" + RESET)
     print(GOLD + "  │" + RESET + BOLD + IVORY + "   C P P F O R G E" + RESET + MUTED + "      learn · build" + RESET + GOLD + "   │" + RESET)
     print(GOLD + "  ╰" + "─" * 46 + "╯" + RESET)
+    print()
     if subtitle:
         print(MUTED + "  " + subtitle + RESET)
     print()
 
 
-def menu(done, update_info=None):
+def tab_bar(active):
+    names = [("1", "Lessons", "lessons"), ("2", "Playground", "playground"), ("3", "Account", "account")]
+    parts = []
+    for key, label, name in names:
+        if name == active:
+            parts.append(GOLD + BOLD + f"[{key}] {label}" + RESET)
+        else:
+            parts.append(MUTED + f"[{key}] {label}" + RESET)
+    print("  " + "    ".join(parts))
+    print(MUTED + "  " + "─" * 46 + RESET + "\n")
+
+
+TAB_KEYS = {"1": "lessons", "2": "playground", "3": "account"}
+
+
+# ---------- Tab screens ----------
+def screen_lessons(done, update_info):
     header("Your path through modern C++")
+    tab_bar("lessons")
     for i, lesson in enumerate(LESSONS, 1):
         mark = MINT + "✓" if i - 1 in done else MUTED + "·"
-        print(f"  {mark}{RESET} {GOLD}{i}{RESET}  {IVORY}{lesson['title']}{RESET}")
+        print(f"  {mark}{RESET} {GOLD}{i:>2}{RESET}  {IVORY}{lesson['title']}{RESET}")
     print()
     pct = int(100 * len(done) / len(LESSONS))
     bar = "█" * (pct // 5) + "░" * (20 - pct // 5)
     print(f"  {VIOLET}{bar}{RESET} {MUTED}{pct}%{RESET}\n")
     if update_info:
-        print(GOLD + f"  ↑ Update {update_info.get('version')} is available. Press [u] to install it." + RESET + "\n")
-    print(MUTED + "  [number] open lesson   [p] playground   [u] update   [x] reset   [q] quit" + RESET)
+        print(GOLD + f"  ↑ Update {update_info.get('version')} is available. Press [u] to install." + RESET + "\n")
+    print(MUTED + "  [number] open lesson   [u] update   [x] reset   [q] quit" + RESET)
+    return ask().lower()
 
 
+def screen_playground():
+    header("Playground")
+    tab_bar("playground")
+    print(MUTED + "  Write any C++. We check it for common mistakes and give tips." + RESET)
+    print(MUTED + "  Press Enter to start a new program, or a tab number to switch." + RESET)
+    command = ask("  › ").lower()
+    if command in TAB_KEYS or command == "q":
+        return command
+    lines = []
+    print(MUTED + "  type your code. :done to finish" + RESET)
+    while True:
+        try:
+            line = input(GOLD + "  │ " + RESET)
+        except EOFError:
+            break
+        if line.strip() == ":done":
+            break
+        lines.append(line)
+    code = "\n".join(lines)
+    print()
+    if code.strip():
+        show_feedback(code)
+    print()
+    pause()
+    return ""
+
+
+def screen_account(acct):
+    header("Account")
+    tab_bar("account")
+    if acct.get("email"):
+        print(IVORY + f"  Signed in as {BOLD}{acct.get('name') or acct['email']}{RESET}")
+        print(MUTED + f"  {acct['email']}" + RESET + "\n")
+        print(MUTED + "  [o] sign out   [1-2] tabs   [q] quit" + RESET)
+    else:
+        print(IVORY + "  You are not signed in. Signing in lets your progress follow you." + RESET + "\n")
+        print(MUTED + "  [s] sign in with Google   [1-2] tabs   [q] quit" + RESET)
+    return ask().lower()
+
+
+# ---------- Lesson flow ----------
 def strip_noise(text):
     text = re.sub(r'"(?:\\.|[^"\\])*"', '""', text)
     return re.sub(r"//.*", "", text)
@@ -258,7 +436,8 @@ def lint(code):
         if nxt.startswith("{"):
             continue
         issues.append(f"Line {i + 1}: did you forget a ';'?  ->  {s}")
-    needs = {"std::cout": "iostream", "std::cin": "iostream", "std::vector": "vector", "std::string": "string"}
+    needs = {"std::cout": "iostream", "std::cin": "iostream", "std::vector": "vector",
+             "std::string": "string", "std::unique_ptr": "memory", "std::make_unique": "memory"}
     for token, header_name in needs.items():
         if token in code and f"<{header_name}>" not in code:
             issues.append(f"You use {token} but have no #include <{header_name}>.")
@@ -345,10 +524,8 @@ def run_lesson(index, done):
     type_code(lesson["code"])
     print(MUTED + "  " + "─" * 46 + RESET)
     pause()
-
     quiz_ok = quiz(lesson)
     pause()
-
     ex_ok = exercise(lesson)
     print()
     if quiz_ok and ex_ok:
@@ -360,18 +537,7 @@ def run_lesson(index, done):
     pause()
 
 
-def playground():
-    header("Playground")
-    print(MUTED + "  Write any C++ here. We check it for common mistakes and give tips." + RESET)
-    print()
-    code = read_code(None)
-    print()
-    if code.strip():
-        show_feedback(code)
-    print()
-    pause()
-
-
+# ---------- Main ----------
 def run_update_command():
     info = check_for_update(timeout=6, quiet=False)
     if info:
@@ -391,27 +557,37 @@ def main():
     if os.environ.get("CPPFORGE_NO_UPDATE_CHECK") != "1":
         update_info = check_for_update(timeout=2)
 
+    tab = "lessons"
     try:
         while True:
-            menu(done, update_info)
-            choice = ask().lower()
-            if choice == "q":
+            if tab == "lessons":
+                cmd = screen_lessons(done, update_info)
+                if cmd.isdigit() and 1 <= int(cmd) <= len(LESSONS):
+                    run_lesson(int(cmd) - 1, done)
+                elif cmd == "u":
+                    info = update_info or check_for_update(timeout=6, quiet=False)
+                    if info:
+                        do_update(info)
+                        update_info = None
+                    pause()
+                elif cmd == "x":
+                    done.clear()
+                    save_progress(done)
+            elif tab == "playground":
+                cmd = screen_playground()
+            else:
+                cmd = screen_account(account())
+                if cmd == "s":
+                    sign_in()
+                    pause()
+                elif cmd == "o":
+                    sign_out()
+                    pause()
+
+            if cmd == "q":
                 break
-            if choice == "x":
-                done.clear()
-                save_progress(done)
-            elif choice == "p":
-                playground()
-            elif choice == "u":
-                info = update_info or check_for_update(timeout=6, quiet=False)
-                if info:
-                    do_update(info)
-                    update_info = None
-                    pause()
-                else:
-                    pause()
-            elif choice.isdigit() and 1 <= int(choice) <= len(LESSONS):
-                run_lesson(int(choice) - 1, done)
+            if cmd in TAB_KEYS:
+                tab = TAB_KEYS[cmd]
     except (KeyboardInterrupt, EOFError):
         pass
     print(CLEAR + GOLD + "  Keep forging. " + RESET + MUTED + f"({len(done)}/{len(LESSONS)} complete)" + RESET)
