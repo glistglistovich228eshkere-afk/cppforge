@@ -26,7 +26,7 @@ h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;m
 .typing::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--gold);vertical-align:-.15em;margin-left:2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .btn,.opt,.lesson,.ghost{font:inherit;cursor:pointer;border-radius:12px;transition:transform .15s,opacity .2s}
-.btn{display:block;width:100%;background:linear-gradient(135deg,#f5d67a,var(--gold));color:var(--bg);border:0;padding:13px 18px;font-weight:700}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#f5d67a,var(--gold));color:var(--bg);border:0;padding:13px 18px;font-weight:700;margin-top:10px}
 .btn:disabled{opacity:.35;cursor:default}
 .btn:active,.opt:active,.lesson:active{transform:scale(.98)}
 .opt{display:block;width:100%;text-align:left;background:#1b1b2b;color:var(--ivory);border:1px solid #2a2a42;padding:13px 14px;margin-bottom:10px;font-size:14px}
@@ -38,8 +38,11 @@ h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;m
 .progress div{height:100%;background:linear-gradient(90deg,var(--violet),var(--gold));transition:width .6s}
 .meta{font-size:12px;color:var(--muted);margin:8px 0 18px}
 .ghost{background:none;border:0;color:var(--muted);padding:10px;width:100%;margin-top:6px}
-.fb{min-height:3em;line-height:1.6;margin:14px 0}.ok{color:var(--mint)}.bad{color:var(--rose)}
-.btns{display:grid;gap:8px;margin-top:10px}
+.fb{min-height:2em;line-height:1.6;margin:12px 0;font-size:14px}.ok{color:var(--mint)}.bad{color:var(--rose)}.muted{color:var(--muted)}
+.ta{width:100%;min-height:200px;background:#08080d;color:var(--ivory);border:1px solid #23233a;border-radius:12px;padding:12px;font:13.5px/1.55 'JetBrains Mono',ui-monospace,monospace;resize:vertical;tab-size:4}
+.ta:focus{outline:1px solid var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hintbox{min-height:1.6em;color:var(--gold);font-size:14px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -48,40 +51,68 @@ h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;m
 const LESSONS = [
   {
     title: 'Hello, World',
-    text: 'Every C++ program begins running at main(). The include line pulls in the I/O library, and std::cout sends text to your terminal.',
+    intro: 'Every C++ program starts running at main(). std::cout sends text to the terminal, and << sends each piece of output.',
     code: ['#include <iostream>', '', 'int main() {', '    std::cout << "Hello, World!" << std::endl;', '    return 0;', '}'],
-    quiz: { q: 'Which object prints text to the terminal?', options: ['std::cin', 'std::cout', 'std::print_all', 'console.log'], answer: 1, why: 'std::cout is the standard output stream. std::cin reads input.' }
+    quiz: { q: 'Which object prints text to the terminal?', options: ['std::cin', 'std::cout', 'std::print_all', 'console.log'], answer: 1, why: 'std::cout is the standard output stream. std::cin reads input.' },
+    exercise: { prompt: 'Print the text Hi from cppforge instead of Hello, World!', hint: 'Keep std::cout << and put the new text in double quotes.', must: ['std::cout', 'Hi from cppforge'] }
   },
   {
     title: 'Variables & Types',
-    text: 'C++ is statically typed: every variable has a type known at compile time. auto asks the compiler to deduce the type from the initializer.',
+    intro: 'C++ is statically typed. Every variable has a type the compiler checks before the program runs. auto lets the compiler work the type out from the value.',
     code: ['int year = 2026;', 'double pi = 3.14159;', 'bool ready = true;', "char grade = 'A';", 'auto count = 42;  // deduced as int'],
-    quiz: { q: "Which keyword lets the compiler deduce a variable's type?", options: ['var', 'let', 'auto', 'dynamic'], answer: 2, why: 'auto deduces the type from the value you assign.' }
+    quiz: { q: "Which keyword lets the compiler deduce a variable's type?", options: ['var', 'let', 'auto', 'dynamic'], answer: 2, why: 'auto deduces the type from the value you assign.' },
+    exercise: { prompt: 'Declare an int named score set to 10, and a double named ratio.', hint: 'Write the type, then the name, then = and the value.', must: ['int score = 10', 'double ratio'] }
   },
   {
-    title: 'Control Flow',
-    text: 'if and for decide what runs and how often. A classic for loop has three parts: start, condition, and step.',
-    code: ['for (int i = 0; i < 3; ++i) {', '    if (i % 2 == 0) {', '        std::cout << i << " is even" << std::endl;', '    }', '}'],
-    quiz: { q: 'How many times does for (int i = 0; i < 3; ++i) run?', options: ['2', '3', '4', 'Forever'], answer: 1, why: 'i takes the values 0, 1, and 2, so the body runs three times.' }
+    title: 'Conditions',
+    intro: 'if runs a block only when its condition is true. else handles the other case. Comparisons like > and == produce true or false.',
+    code: ['int score = 7;', '', 'if (score > 5) {', '    std::cout << "Passed" << std::endl;', '} else {', '    std::cout << "Keep trying" << std::endl;', '}'],
+    quiz: { q: 'What does == check?', options: ['Assignment', 'Equality', 'Addition', 'Declaration'], answer: 1, why: '== compares two values. = assigns a value.' },
+    exercise: { prompt: 'Write an if statement that checks whether score is greater than 5.', hint: 'if (condition) { }, and the condition is score > 5.', must: ['if (score > 5)'] }
   },
   {
-    title: 'Functions & References',
-    text: "A function can take an int& parameter. The & makes it a reference, so changes inside the function affect the caller's variable.",
+    title: 'Loops',
+    intro: 'A for loop repeats code. It has three parts: a starting value, a condition that keeps it going, and a step after each pass.',
+    code: ['for (int i = 0; i < 3; ++i) {', '    std::cout << i << std::endl;', '}'],
+    quiz: { q: 'How many times does for (int i = 0; i < 3; ++i) run?', options: ['2', '3', '4', 'Forever'], answer: 1, why: 'i takes 0, 1, and 2, so the body runs three times.' },
+    exercise: { prompt: 'Write a for loop that counts i from 1 to 5.', hint: 'Start at 1, keep going while i <= 5, and step with ++i.', must: ['for (int i = 1; i <= 5; ++i)'] }
+  },
+  {
+    title: 'Functions',
+    intro: 'A function groups code under a name. It can take inputs and return a result. Write the return type first, then the name and the parameters.',
+    code: ['int add(int a, int b) {', '    return a + b;', '}', '', 'int main() {', '    std::cout << add(2, 3) << std::endl;', '}'],
+    quiz: { q: 'What does the first int in int add(int a, int b) describe?', options: ['The return type', 'The name', 'A loop', 'An include'], answer: 0, why: 'The first type is what the function returns. a and b are parameters.' },
+    exercise: { prompt: 'Write a function named add that takes two ints and returns their sum.', hint: 'Signature: int add(int a, int b), then return a + b.', must: ['int add(int a, int b)', 'return a + b'] }
+  },
+  {
+    title: 'References',
+    intro: "A reference is another name for an existing variable. Writing int& x means the function changes the caller's variable, not a copy.",
     code: ['void bump(int& x) {', '    x += 1;', '}', '', 'int main() {', '    int n = 5;', '    bump(n);  // n is now 6', '}'],
-    quiz: { q: 'What does the & in int& x mean?', options: ['Bitwise AND', 'Address of a copy', "A reference to the caller's variable", 'A pointer to a string'], answer: 2, why: 'A reference is an alias, so modifying x modifies the original.' }
+    quiz: { q: 'What does the & in int& x mean?', options: ['Bitwise AND', 'Address of a copy', 'A reference to the caller variable', 'A pointer to a string'], answer: 2, why: 'A reference is an alias, so changing x changes the original.' },
+    exercise: { prompt: 'Write void reset(int& x) that sets x to 0.', hint: 'Inside the function, assign 0 to x.', must: ['void reset(int& x)', 'x = 0'] }
   },
   {
-    title: 'Vectors & Range-for',
-    text: 'std::vector is a resizable array and the everyday container of C++. The range-for loop visits each element without manual indexing.',
-    code: ['#include <vector>', '', 'std::vector<int> v{1, 2, 3};', 'v.push_back(4);', 'for (int n : v) {', '    std::cout << n << " ";', '}'],
-    quiz: { q: 'Which method returns how many elements a std::vector holds?', options: ['length()', 'size()', 'count()', 'len()'], answer: 1, why: 'size() is the standard member function for element count.' }
+    title: 'Vectors & Strings',
+    intro: 'std::vector is a resizable list, and std::string holds text. push_back adds an element to the end. Include the matching header for each.',
+    code: ['#include <string>', '#include <vector>', '', 'std::vector<std::string> names{"Ada", "Linus"};', 'names.push_back("Grace");', 'for (const std::string& n : names) {', '    std::cout << n << std::endl;', '}'],
+    quiz: { q: 'Which method adds an element to the end of a std::vector?', options: ['add()', 'push_back()', 'append_end()', 'insert_last()'], answer: 1, why: 'push_back() appends one element at the end.' },
+    exercise: { prompt: 'Create a vector of strings named names and add Ada to it.', hint: 'std::vector<std::string> names; then names.push_back(...).', must: ['std::vector<std::string> names', 'push_back("Ada")'] }
   },
   {
     title: 'Classes',
-    text: 'A class bundles data and behavior. Methods marked const promise not to modify the object, which lets the compiler catch mistakes for you.',
+    intro: 'A class groups data and functions into one type. A method marked const promises not to change the object.',
     code: ['class Dog {', 'public:', '    std::string name;', '', '    void speak() const {', '        std::cout << name << " says woof" << std::endl;', '    }', '};'],
-    quiz: { q: "Which keyword promises a member function won't modify the object?", options: ['static', 'const', 'final', 'readonly'], answer: 1, why: 'Placing const after the parameter list makes the method read-only.' }
+    quiz: { q: "Which keyword promises a method won't modify the object?", options: ['static', 'const', 'final', 'readonly'], answer: 1, why: 'Placing const after the parameter list makes the method read-only.' },
+    exercise: { prompt: 'Create a class Counter with a public int value and a method increment() that adds one to it.', hint: 'class Counter { public: int value; void increment() { value++; } };', must: ['class Counter', 'increment()', 'value++'] }
   }
+];
+
+const TIPS = [
+  ['for (', 'A for loop has three parts: a start, a condition, and a step.'],
+  ['class ', 'Classes end with }; the semicolon is required.'],
+  ['push_back', 'push_back adds one element to the end of a vector.'],
+  ['&', 'After a type, & makes a reference: another name for the same variable.'],
+  ['int main', 'main() is where the program starts. Return 0 for success.']
 ];
 
 const KW = new Set(['include','int','double','float','bool','char','auto','void','return','if','else','for','while','class','public','private','const','using','namespace','struct']);
@@ -98,13 +129,41 @@ function hl(line) {
   });
 }
 
+function strip(t) { return t.replace(/"(?:\\.|[^"\\])*"/g, '""').replace(/\/\/.*$/gm, ''); }
+function cnt(s, ch) { return s.split(ch).length - 1; }
+
+function lintCode(code) {
+  const issues = [], c = strip(code), lines = c.split('\n');
+  [['(', ')'], ['[', ']'], ['{', '}']].forEach(([a, b]) => {
+    if (cnt(c, a) !== cnt(c, b)) issues.push('Unbalanced ' + a + b + ': every opening bracket needs a closing one.');
+  });
+  lines.forEach((ln, i) => {
+    const s = ln.trim();
+    if (!s || s.startsWith('#') || /[;{}:,]$/.test(s)) return;
+    if (/^(if|for|while|else|switch|class|struct|namespace)\b/.test(s) || /[(=+\-<&|]$/.test(s)) return;
+    const nxt = (lines.slice(i + 1).find(l => l.trim()) || '').trim();
+    if (nxt.startsWith('{')) return;
+    issues.push('Line ' + (i + 1) + ": did you forget a ';'?  ->  " + s);
+  });
+  [['std::cout', 'iostream'], ['std::cin', 'iostream'], ['std::vector', 'vector'], ['std::string', 'string']].forEach(([t, h]) => {
+    if (code.includes(t) && !code.includes('<' + h + '>')) issues.push('You use ' + t + ' but have no #include <' + h + '>.');
+  });
+  return [...new Set(issues)];
+}
+
+function missingParts(code, must) {
+  const sq = s => s.replace(/\s+/g, '');
+  const c = sq(code);
+  return must.filter(m => !c.includes(sq(m)));
+}
+
 let done = new Set(JSON.parse(localStorage.getItem('cppforge.done') || '[]'));
+const state = {};
 let skipping = false;
 const app = document.getElementById('app');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 document.addEventListener('pointerdown', () => { skipping = true; });
 
-// Typewriter: types one character at a time. Tap the screen to finish instantly.
 async function typeInto(el, text, speed = 16) {
   if (!el) return;
   skipping = false;
@@ -118,6 +177,8 @@ async function typeInto(el, text, speed = 16) {
   el.classList.remove('typing');
 }
 
+function save() { localStorage.setItem('cppforge.done', JSON.stringify([...done])); }
+
 function menu() {
   const pct = Math.round(100 * done.size / LESSONS.length);
   app.innerHTML = `
@@ -129,23 +190,25 @@ function menu() {
         <span class="num">${i + 1}</span><span>${esc(L.title)}</span>
         <span class="tick">${done.has(i) ? '✓' : ''}</span>
       </button>`).join('')}
+    <button class="btn" onclick="playground()">Open playground</button>
     <button class="ghost" onclick="resetProgress()">Reset progress</button>`;
 }
 
 async function openLesson(i) {
   const L = LESSONS[i];
+  state[i] = { quiz: false, ex: false };
   app.innerHTML = `<div class="card">
     <div class="kicker">Lesson ${i + 1} of ${LESSONS.length}</div>
     <div class="title" id="t"></div>
     <p class="body" id="b"></p>
     <pre class="code" id="c"></pre>
-    <button class="btn" id="next" disabled>Continue</button></div>`;
+    <button class="btn" id="next" disabled>Quiz</button></div>`;
   await typeInto(document.getElementById('t'), L.title, 40);
-  await typeInto(document.getElementById('b'), L.text, 14);
+  await typeInto(document.getElementById('b'), L.intro, 14);
   const pre = document.getElementById('c');
   for (const line of L.code) {
     pre.insertAdjacentHTML('beforeend', '<div>' + (hl(line) || '&nbsp;') + '</div>');
-    if (!skipping) await sleep(90);
+    if (!skipping) await sleep(80);
   }
   const next = document.getElementById('next');
   if (next) { next.disabled = false; next.onclick = () => quiz(i); }
@@ -170,19 +233,78 @@ function answer(i, n) {
   const fb = document.getElementById('fb');
   document.querySelectorAll('.opt').forEach(b => b.disabled = true);
   const right = n === Q.answer;
-  if (right) {
-    done.add(i);
-    localStorage.setItem('cppforge.done', JSON.stringify([...done]));
-  }
+  state[i].quiz = right;
   fb.className = 'fb ' + (right ? 'ok' : 'bad');
   typeInto(fb, (right ? '✦ Correct. ' : '✧ Not quite. ') + Q.why, 12).then(() => {
-    fb.insertAdjacentHTML('beforeend', `<div class="btns">${right ? '' : `<button class="btn" onclick="quiz(${i})">Try again</button>`}<button class="ghost" onclick="menu()">Back to path</button></div>`);
+    fb.insertAdjacentHTML('beforeend', `<button class="btn" onclick="exercise(${i})">Next: try it</button>`);
+    if (!right) fb.insertAdjacentHTML('beforeend', `<button class="ghost" onclick="quiz(${i})">Try the quiz again</button>`);
   });
+}
+
+function exercise(i) {
+  const E = LESSONS[i].exercise;
+  state[i] = state[i] || { quiz: false, ex: false };
+  app.innerHTML = `<div class="card">
+    <div class="kicker">Try it · ${esc(LESSONS[i].title)}</div>
+    <h2 id="p"></h2>
+    <textarea class="ta" id="ta" spellcheck="false" placeholder="Type your C++ here"></textarea>
+    <div class="hintbox" id="hint"></div>
+    <div class="row"><button class="ghost" onclick="showHint(${i})">Hint</button><button class="btn" onclick="check(${i})">Check</button></div>
+    <div class="fb" id="fb"></div></div>`;
+  typeInto(document.getElementById('p'), E.prompt, 14);
+}
+
+function showHint(i) {
+  typeInto(document.getElementById('hint'), 'tip: ' + LESSONS[i].exercise.hint, 12);
+}
+
+function check(i) {
+  const code = document.getElementById('ta').value;
+  const fb = document.getElementById('fb');
+  const issues = lintCode(code);
+  const missing = missingParts(code, LESSONS[i].exercise.must);
+  let html = issues.map(m => `<div class="bad">! ${esc(m)}</div>`).join('');
+  TIPS.forEach(([k, t]) => { if (code.includes(k)) html += `<div class="muted">· ${esc(t)}</div>`; });
+  if (missing.length) {
+    fb.innerHTML = html + '<div class="bad">Not there yet. Re-read the prompt, or tap Hint.</div>';
+    return;
+  }
+  state[i].ex = true;
+  fb.innerHTML = html + '<div class="ok">✦ Exercise passed.</div><button class="btn" onclick="finish(' + i + ')">Finish lesson</button>';
+}
+
+function finish(i) {
+  const s = state[i] || {};
+  if (s.quiz && s.ex) { done.add(i); save(); }
+  menu();
+}
+
+function playground() {
+  app.innerHTML = `<div class="card">
+    <div class="kicker">Playground</div>
+    <h2>Write any C++</h2>
+    <p class="body muted">We check your code for common mistakes and give tips. Nothing is run on your phone.</p>
+    <textarea class="ta" id="ta" spellcheck="false" placeholder="#include <iostream>\n\nint main() {\n}"></textarea>
+    <div class="row"><button class="ghost" onclick="menu()">Back</button><button class="btn" onclick="runPlayground()">Check code</button></div>
+    <div class="code" id="out" style="display:none"></div>
+    <div class="fb" id="fb"></div></div>`;
+}
+
+function runPlayground() {
+  const code = document.getElementById('ta').value;
+  const out = document.getElementById('out');
+  const fb = document.getElementById('fb');
+  out.style.display = 'block';
+  out.innerHTML = code.split('\n').map(l => '<div>' + (hl(l) || '&nbsp;') + '</div>').join('');
+  const issues = lintCode(code);
+  let html = issues.length ? issues.map(m => `<div class="bad">! ${esc(m)}</div>`).join('') : '<div class="ok">✓ no obvious problems</div>';
+  TIPS.forEach(([k, t]) => { if (code.includes(k)) html += `<div class="muted">· ${esc(t)}</div>`; });
+  fb.innerHTML = html;
 }
 
 function resetProgress() {
   done = new Set();
-  localStorage.setItem('cppforge.done', '[]');
+  save();
   menu();
 }
 
