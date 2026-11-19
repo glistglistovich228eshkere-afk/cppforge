@@ -11,10 +11,13 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;background:radial-gradient(120% 60% at 50% 0%,#1d1838 0%,var(--bg) 60%) fixed,var(--bg);color:var(--ivory);font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
 main{max-width:640px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 24px)}
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--bg);background:linear-gradient(135deg,#f5d67a,var(--gold));font-weight:700;box-shadow:0 0 24px rgba(212,175,55,.35)}
 .name{font-family:'Playfair Display',Georgia,serif;font-size:24px;letter-spacing:.06em}
 .tag{font-size:12px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
+.tabs{display:flex;gap:6px;margin-bottom:16px;background:#101018;border:1px solid #23233a;border-radius:14px;padding:4px}
+.tab{flex:1;font:inherit;font-size:13px;background:none;border:0;color:var(--muted);padding:10px 4px;border-radius:10px;cursor:pointer}
+.tab.on{background:linear-gradient(135deg,#f5d67a,var(--gold));color:var(--bg);font-weight:700}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--card);border:1px solid rgba(212,175,55,.22);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
 .kicker{font-size:12px;color:var(--violet);letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px}
 .title{font-family:'Playfair Display',Georgia,serif;color:var(--gold);font-size:30px;margin:0 0 12px;min-height:1.2em}
@@ -33,16 +36,17 @@ h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;m
 .opt:disabled{opacity:.5;cursor:default}
 .lesson{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#14141f;color:var(--ivory);border:1px solid #23233a;padding:14px;margin-bottom:10px;font-size:15px}
 .lesson.got{border-color:rgba(110,220,170,.45)}
-.num{color:var(--gold);width:22px}.tick{margin-left:auto;color:var(--mint)}
+.num{color:var(--gold);width:26px}.tick{margin-left:auto;color:var(--mint)}
 .progress{height:8px;border-radius:99px;background:#1c1c2c;overflow:hidden}
 .progress div{height:100%;background:linear-gradient(90deg,var(--violet),var(--gold));transition:width .6s}
 .meta{font-size:12px;color:var(--muted);margin:8px 0 18px}
-.ghost{background:none;border:0;color:var(--muted);padding:10px;width:100%;margin-top:6px}
+.ghost{background:none;border:1px solid #2a2a42;color:var(--muted);padding:12px;width:100%;margin-top:10px}
 .fb{min-height:2em;line-height:1.6;margin:12px 0;font-size:14px}.ok{color:var(--mint)}.bad{color:var(--rose)}.muted{color:var(--muted)}
 .ta{width:100%;min-height:200px;background:#08080d;color:var(--ivory);border:1px solid #23233a;border-radius:12px;padding:12px;font:13.5px/1.55 'JetBrains Mono',ui-monospace,monospace;resize:vertical;tab-size:4}
 .ta:focus{outline:1px solid var(--gold)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hintbox{min-height:1.6em;color:var(--gold);font-size:14px;margin-top:8px}
+.code-code{margin-top:12px}
 </style>
 </head>
 <body>
@@ -78,6 +82,13 @@ const LESSONS = [
     exercise: { prompt: 'Write a for loop that counts i from 1 to 5.', hint: 'Start at 1, keep going while i <= 5, and step with ++i.', must: ['for (int i = 1; i <= 5; ++i)'] }
   },
   {
+    title: 'While Loops',
+    intro: 'A while loop repeats as long as its condition stays true. Use it when you do not know in advance how many passes you need.',
+    code: ['int n = 3;', 'while (n > 0) {', '    std::cout << n << std::endl;', '    --n;', '}'],
+    quiz: { q: 'When does a while loop stop?', options: ['When the condition is false', 'After one pass', 'Never', 'Only when n is zero'], answer: 0, why: 'The condition is checked before each pass, and the loop stops when it is false.' },
+    exercise: { prompt: 'Write a while loop that runs while count is less than 10.', hint: 'while (condition) { ... }', must: ['while (count < 10)'] }
+  },
+  {
     title: 'Functions',
     intro: 'A function groups code under a name. It can take inputs and return a result. Write the return type first, then the name and the parameters.',
     code: ['int add(int a, int b) {', '    return a + b;', '}', '', 'int main() {', '    std::cout << add(2, 3) << std::endl;', '}'],
@@ -92,6 +103,13 @@ const LESSONS = [
     exercise: { prompt: 'Write void reset(int& x) that sets x to 0.', hint: 'Inside the function, assign 0 to x.', must: ['void reset(int& x)', 'x = 0'] }
   },
   {
+    title: 'Input with cin',
+    intro: 'std::cin reads values typed by the user. The >> operator pulls a value from the input into a variable.',
+    code: ['#include <iostream>', '', 'int main() {', '    int age;', '    std::cin >> age;', '    std::cout << "You are " << age << std::endl;', '}'],
+    quiz: { q: 'Which operator reads a value from std::cin into a variable?', options: ['<<', '>>', '->', '::'], answer: 1, why: '>> reads from the input stream into a variable.' },
+    exercise: { prompt: 'Declare an int named age, then read it from the user with std::cin.', hint: 'int age; then std::cin >> age;', must: ['int age', 'std::cin >> age'] }
+  },
+  {
     title: 'Vectors & Strings',
     intro: 'std::vector is a resizable list, and std::string holds text. push_back adds an element to the end. Include the matching header for each.',
     code: ['#include <string>', '#include <vector>', '', 'std::vector<std::string> names{"Ada", "Linus"};', 'names.push_back("Grace");', 'for (const std::string& n : names) {', '    std::cout << n << std::endl;', '}'],
@@ -99,11 +117,25 @@ const LESSONS = [
     exercise: { prompt: 'Create a vector of strings named names and add Ada to it.', hint: 'std::vector<std::string> names; then names.push_back(...).', must: ['std::vector<std::string> names', 'push_back("Ada")'] }
   },
   {
+    title: 'Enums',
+    intro: 'An enum class is a named set of values, such as the colors or states your program can be in. It keeps those values from clashing with other names.',
+    code: ['enum class Color { Red, Green, Blue };', '', 'Color c = Color::Green;'],
+    quiz: { q: 'How do you refer to a value of an enum class?', options: ['Color.Red', 'Color::Red', 'Red', 'color->Red'], answer: 1, why: ':: picks a value from the enum scope.' },
+    exercise: { prompt: 'Declare an enum class named Mood with the values Happy and Sad.', hint: 'enum class Name { A, B };', must: ['enum class Mood', 'Happy', 'Sad'] }
+  },
+  {
     title: 'Classes',
     intro: 'A class groups data and functions into one type. A method marked const promises not to change the object.',
     code: ['class Dog {', 'public:', '    std::string name;', '', '    void speak() const {', '        std::cout << name << " says woof" << std::endl;', '    }', '};'],
     quiz: { q: "Which keyword promises a method won't modify the object?", options: ['static', 'const', 'final', 'readonly'], answer: 1, why: 'Placing const after the parameter list makes the method read-only.' },
     exercise: { prompt: 'Create a class Counter with a public int value and a method increment() that adds one to it.', hint: 'class Counter { public: int value; void increment() { value++; } };', must: ['class Counter', 'increment()', 'value++'] }
+  },
+  {
+    title: 'Smart Pointers',
+    intro: 'A std::unique_ptr owns an object on the heap and deletes it automatically when it goes out of scope. This avoids the leaks that raw new and delete can cause.',
+    code: ['#include <memory>', '', 'auto p = std::make_unique<int>(42);', 'std::cout << *p << std::endl;'],
+    quiz: { q: 'Which pointer type frees its object automatically?', options: ['int*', 'std::unique_ptr', 'raw new', 'void*'], answer: 1, why: 'unique_ptr deletes the object when it goes out of scope.' },
+    exercise: { prompt: 'Create a std::unique_ptr<int> named p that holds 7, using std::make_unique.', hint: 'auto p = std::make_unique<int>(7);', must: ['std::unique_ptr<int> p', 'std::make_unique<int>(7)'] }
   }
 ];
 
@@ -112,10 +144,11 @@ const TIPS = [
   ['class ', 'Classes end with }; the semicolon is required.'],
   ['push_back', 'push_back adds one element to the end of a vector.'],
   ['&', 'After a type, & makes a reference: another name for the same variable.'],
-  ['int main', 'main() is where the program starts. Return 0 for success.']
+  ['int main', 'main() is where the program starts. Return 0 for success.'],
+  ['make_unique', 'make_unique creates the object and returns a unique_ptr that owns it.']
 ];
 
-const KW = new Set(['include','int','double','float','bool','char','auto','void','return','if','else','for','while','class','public','private','const','using','namespace','struct']);
+const KW = new Set(['include','int','double','float','bool','char','auto','void','return','if','else','for','while','class','public','private','const','using','namespace','struct','enum']);
 const TOK = /(\/\/.*$)|("(?:\\.|[^"\\])*")|(#\w+)|(\b\w+\b)|(\s+)|([\s\S])/g;
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
@@ -145,7 +178,7 @@ function lintCode(code) {
     if (nxt.startsWith('{')) return;
     issues.push('Line ' + (i + 1) + ": did you forget a ';'?  ->  " + s);
   });
-  [['std::cout', 'iostream'], ['std::cin', 'iostream'], ['std::vector', 'vector'], ['std::string', 'string']].forEach(([t, h]) => {
+  [['std::cout', 'iostream'], ['std::cin', 'iostream'], ['std::vector', 'vector'], ['std::string', 'string'], ['std::unique_ptr', 'memory'], ['std::make_unique', 'memory']].forEach(([t, h]) => {
     if (code.includes(t) && !code.includes('<' + h + '>')) issues.push('You use ' + t + ' but have no #include <' + h + '>.');
   });
   return [...new Set(issues)];
@@ -158,8 +191,11 @@ function missingParts(code, must) {
 }
 
 let done = new Set(JSON.parse(localStorage.getItem('cppforge.done') || '[]'));
+let acct = {};
+let tab = 'lessons';
 const state = {};
 let skipping = false;
+let draft = '';
 const app = document.getElementById('app');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 document.addEventListener('pointerdown', () => { skipping = true; });
@@ -179,10 +215,24 @@ async function typeInto(el, text, speed = 16) {
 
 function save() { localStorage.setItem('cppforge.done', JSON.stringify([...done])); }
 
+// Called by the Android app after sign-in changes
+window.setAccount = function (o) { acct = o || {}; if (tab === 'account') account(); };
+
+function tabs() {
+  const t = (id, label) => `<button class="tab ${tab === id ? 'on' : ''}" onclick="go('${id}')">${label}</button>`;
+  return `<nav class="tabs">${t('lessons', 'Lessons')}${t('playground', 'Playground')}${t('account', 'Account')}</nav>`;
+}
+
+function header() {
+  return `<header class="brand"><div class="logo">C++</div><div><div class="name">cppforge</div><div class="tag">learn · build</div></div></header>`;
+}
+
+function go(id) { tab = id; if (id === 'lessons') menu(); else if (id === 'playground') playground(); else account(); }
+
 function menu() {
+  tab = 'lessons';
   const pct = Math.round(100 * done.size / LESSONS.length);
-  app.innerHTML = `
-    <header class="brand"><div class="logo">C++</div><div><div class="name">cppforge</div><div class="tag">learn · build</div></div></header>
+  app.innerHTML = header() + tabs() + `
     <div class="progress"><div style="width:${pct}%"></div></div>
     <div class="meta">${done.size}/${LESSONS.length} complete · ${pct}%</div>
     ${LESSONS.map((L, i) => `
@@ -190,7 +240,6 @@ function menu() {
         <span class="num">${i + 1}</span><span>${esc(L.title)}</span>
         <span class="tick">${done.has(i) ? '✓' : ''}</span>
       </button>`).join('')}
-    <button class="btn" onclick="playground()">Open playground</button>
     <button class="ghost" onclick="resetProgress()">Reset progress</button>`;
 }
 
@@ -202,7 +251,8 @@ async function openLesson(i) {
     <div class="title" id="t"></div>
     <p class="body" id="b"></p>
     <pre class="code" id="c"></pre>
-    <button class="btn" id="next" disabled>Quiz</button></div>`;
+    <button class="btn" id="next" disabled>Quiz</button>
+    <button class="ghost" onclick="menu()">Back to lessons</button></div>`;
   await typeInto(document.getElementById('t'), L.title, 40);
   await typeInto(document.getElementById('b'), L.intro, 14);
   const pre = document.getElementById('c');
@@ -233,6 +283,7 @@ function answer(i, n) {
   const fb = document.getElementById('fb');
   document.querySelectorAll('.opt').forEach(b => b.disabled = true);
   const right = n === Q.answer;
+  state[i] = state[i] || {};
   state[i].quiz = right;
   fb.className = 'fb ' + (right ? 'ok' : 'bad');
   typeInto(fb, (right ? '✦ Correct. ' : '✧ Not quite. ') + Q.why, 12).then(() => {
@@ -280,14 +331,17 @@ function finish(i) {
 }
 
 function playground() {
-  app.innerHTML = `<div class="card">
+  tab = 'playground';
+  app.innerHTML = header() + tabs() + `<div class="card">
     <div class="kicker">Playground</div>
     <h2>Write any C++</h2>
-    <p class="body muted">We check your code for common mistakes and give tips. Nothing is run on your phone.</p>
-    <textarea class="ta" id="ta" spellcheck="false" placeholder="#include <iostream>\n\nint main() {\n}"></textarea>
-    <div class="row"><button class="ghost" onclick="menu()">Back</button><button class="btn" onclick="runPlayground()">Check code</button></div>
+    <p class="body muted">We check your code for common mistakes and give tips. Nothing is compiled or run on your phone.</p>
+    <textarea class="ta" id="ta" spellcheck="false" placeholder="#include <iostream>"></textarea>
+    <button class="btn" onclick="runPlayground()">Check code</button>
     <div class="code" id="out" style="display:none"></div>
     <div class="fb" id="fb"></div></div>`;
+  document.getElementById('ta').value = draft;
+  document.getElementById('ta').addEventListener('input', e => draft = e.target.value);
 }
 
 function runPlayground() {
@@ -300,6 +354,32 @@ function runPlayground() {
   let html = issues.length ? issues.map(m => `<div class="bad">! ${esc(m)}</div>`).join('') : '<div class="ok">✓ no obvious problems</div>';
   TIPS.forEach(([k, t]) => { if (code.includes(k)) html += `<div class="muted">· ${esc(t)}</div>`; });
   fb.innerHTML = html;
+}
+
+function account() {
+  tab = 'account';
+  let body;
+  if (acct.email) {
+    body = `<p class="body">Signed in as <b>${esc(acct.name || acct.email)}</b></p><p class="muted">${esc(acct.email)}</p>
+      <button class="ghost" onclick="signOut()">Sign out</button>`;
+  } else if (acct.status === 'waiting') {
+    body = `<p class="body">1. Open <b>${esc(acct.url)}</b></p><p class="body">2. Enter the code <b class="ok">${esc(acct.code)}</b></p><p class="muted">Waiting for you to approve...</p>`;
+  } else {
+    body = `<p class="body">${acct.status === 'error' ? '<span class="bad">' + esc(acct.message) + '</span>' : 'Sign in with Google so your progress can follow you.'}</p>
+      <button class="btn" onclick="signIn()">Sign in with Google</button>`;
+  }
+  app.innerHTML = header() + tabs() + `<div class="card"><div class="kicker">Account</div>${body}</div>`;
+}
+
+function signIn() {
+  if (window.AndroidBridge) { window.AndroidBridge.signIn(); }
+  else { acct = { status: 'error', message: 'Google sign-in works in the Android app.' }; account(); }
+}
+
+function signOut() {
+  if (window.AndroidBridge) window.AndroidBridge.signOut();
+  acct = {};
+  account();
 }
 
 function resetProgress() {
