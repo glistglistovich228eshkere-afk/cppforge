@@ -1,4 +1,4 @@
-name: Build APK
+name: Build and release
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,23 +39,57 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: gradle :app:assembleDebug --no-daemon
 
-      - name: Prepare APK for release
+      - name: Prepare APK
         run: cp android/app/build/outputs/apk/debug/app-debug.apk cppforge.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppforge-apk
+          path: cppforge.apk
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build Windows executable
+        run: |
+          pip install pyinstaller
+          pyinstaller --onefile --name cppforge cppforge.py
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppforge-windows
+          path: dist/cppforge.exe
+
+  release:
+    needs: [android, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download builds
+        uses: actions/download-artifact@v4
+        with:
+          path: downloads
 
       - name: Read app version
         id: ver
         run: echo "version=$(python3 -c "import json; print(json.load(open('version.json'))['version'])")" >> "$GITHUB_OUTPUT"
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cppforge-debug-apk
-          path: cppforge.apk
-
-      - name: Publish GitHub release (used by the in-app update)
+      - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.ver.outputs.version }}
           name: cppforge ${{ steps.ver.outputs.version }}
-          files: cppforge.apk
+          files: |
+            downloads/cppforge-apk/cppforge.apk
+            downloads/cppforge-windows/cppforge.exe
           make_latest: true

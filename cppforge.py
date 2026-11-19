@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""cppforge - learn C++ from your terminal: lessons, a playground, Google sign-in, and updates."""
+"""cppforge - learn C++: lessons, a playground, Google sign-in, and updates. Linux, macOS, and Windows."""
 import json
 import os
 import random
@@ -12,10 +12,15 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-__version__ = "1.2.0"
+if os.name == "nt":
+    os.system("")  # turns on ANSI colors in the Windows console
+
+__version__ = "1.3.0"
 REPO_RAW = "https://raw.githubusercontent.com/glistglistovich228eshkere-afk/cppforge/main"
+RELEASES = "https://github.com/glistglistovich228eshkere-afk/cppforge/releases/latest/download"
 VERSION_URL = REPO_RAW + "/version.json"
 SCRIPT_URL = REPO_RAW + "/cppforge.py"
+EXE_URL = RELEASES + "/cppforge.exe"
 DEVICE_URL = "https://oauth2.googleapis.com/device/code"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
 USERINFO_URL = "https://openidconnect.googleapis.com/v1/userinfo"
@@ -32,8 +37,12 @@ CLEAR = "\033[2J\033[H"
 
 FAST = os.environ.get("CPPFORGE_FAST") == "1" or not sys.stdout.isatty()
 HOME = Path.home()
-DATA = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local/share")) / "cppforge"
-CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "cppforge"
+if os.name == "nt":
+    DATA = Path(os.environ.get("LOCALAPPDATA", HOME / "AppData/Local")) / "cppforge"
+    CONFIG = Path(os.environ.get("APPDATA", HOME / "AppData/Roaming")) / "cppforge"
+else:
+    DATA = Path(os.environ.get("XDG_DATA_HOME", HOME / ".local/share")) / "cppforge"
+    CONFIG = Path(os.environ.get("XDG_CONFIG_HOME", HOME / ".config")) / "cppforge"
 PROGRESS = DATA / "progress.json"
 ACCOUNT = DATA / "account.json"
 GOOGLE_CONFIG = CONFIG / "google.json"
@@ -150,7 +159,10 @@ def load_json(path):
 def save_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data))
-    os.chmod(path, 0o600)
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
 
 
 def load_progress():
@@ -258,6 +270,19 @@ def check_for_update(timeout=4, quiet=True):
 
 
 def apply_update():
+    if getattr(sys, "frozen", False):
+        # Running as cppforge.exe (Windows build): swap in the new exe.
+        # Windows lets a running exe be renamed, so the old copy is moved aside first.
+        data = fetch(EXE_URL, timeout=120)
+        target = Path(sys.executable)
+        staged = target.with_name("cppforge.new.exe")
+        old = target.with_name("cppforge.old.exe")
+        staged.write_bytes(data)
+        if old.exists():
+            old.unlink()
+        os.replace(target, old)
+        os.replace(staged, target)
+        return
     source = fetch(SCRIPT_URL, timeout=15)
     compile(source, "cppforge.py", "exec")
     target = Path(os.path.realpath(__file__))
@@ -268,13 +293,26 @@ def apply_update():
     os.replace(staged, target)
 
 
+def remove_old_exe():
+    if getattr(sys, "frozen", False):
+        old = Path(sys.executable).with_name("cppforge.old.exe")
+        try:
+            if old.exists():
+                old.unlink()
+        except OSError:
+            pass
+
+
 def do_update(info):
     print(SILVER + f"  Downloading cppforge {info.get('version')}..." + RESET)
     try:
         apply_update()
     except PermissionError:
-        print(ROSE + "  No permission to write this install. Try: sudo cppforge --update" + RESET)
-        print(MUTED + "  Or update from the repo: git pull && makepkg -si" + RESET)
+        if getattr(sys, "frozen", False):
+            print(ROSE + "  Windows blocked the update. Close other cppforge windows and try again." + RESET)
+        else:
+            print(ROSE + "  No permission to write this install. Try: sudo cppforge --update" + RESET)
+            print(MUTED + "  Or update from the repo: git pull && makepkg -si" + RESET)
         return False
     except Exception as exc:
         print(ROSE + f"  Update failed, nothing changed: {exc}" + RESET)
@@ -552,6 +590,7 @@ def main():
         run_update_command()
         return
 
+    remove_old_exe()
     done = load_progress()
     update_info = None
     if os.environ.get("CPPFORGE_NO_UPDATE_CHECK") != "1":

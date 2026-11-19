@@ -1,6 +1,7 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "android_versionCode": 3,
   "apk_url": "https://github.com/glistglistovich228eshkere-afk/cppforge/releases/latest/download/cppforge.apk",
-  "notes": "New: Lessons and Playground tabs, 12 lessons, and Google sign-in."
+  "windows_url": "https://github.com/glistglistovich228eshkere-afk/cppforge/releases/latest/download/cppforge.exe",
+  "notes": "New: Windows version (cppforge.exe) with all features. Updates now work on Windows too."
 }
