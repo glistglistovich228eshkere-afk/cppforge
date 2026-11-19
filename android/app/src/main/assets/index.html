@@ -46,12 +46,14 @@ h2{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:22px;m
 .ta:focus{outline:1px solid var(--gold)}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hintbox{min-height:1.6em;color:var(--gold);font-size:14px;margin-top:8px}
-.code-code{margin-top:12px}
+.note{font-size:13px;color:var(--gold);min-height:1.4em;margin-top:8px;text-align:center}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
+const APP_VERSION = window.AndroidBridge ? window.AndroidBridge.getVersion() : 'web preview';
+
 const LESSONS = [
   {
     title: 'Hello, World',
@@ -218,13 +220,28 @@ function save() { localStorage.setItem('cppforge.done', JSON.stringify([...done]
 // Called by the Android app after sign-in changes
 window.setAccount = function (o) { acct = o || {}; if (tab === 'account') account(); };
 
+// Update check: runs natively in the Android app and reports the result as a message.
+function checkUpdates() {
+  if (window.AndroidBridge) {
+    window.AndroidBridge.checkUpdate();
+    setNote('Checking for updates...');
+  } else {
+    setNote('Updates are checked in the Android app.');
+  }
+}
+
+function setNote(text) {
+  const n = document.getElementById('note');
+  if (n) n.textContent = text;
+}
+
 function tabs() {
   const t = (id, label) => `<button class="tab ${tab === id ? 'on' : ''}" onclick="go('${id}')">${label}</button>`;
   return `<nav class="tabs">${t('lessons', 'Lessons')}${t('playground', 'Playground')}${t('account', 'Account')}</nav>`;
 }
 
 function header() {
-  return `<header class="brand"><div class="logo">C++</div><div><div class="name">cppforge</div><div class="tag">learn · build</div></div></header>`;
+  return `<header class="brand"><div class="logo">C++</div><div><div class="name">cppforge</div><div class="tag">learn · build · v${esc(APP_VERSION)}</div></div></header>`;
 }
 
 function go(id) { tab = id; if (id === 'lessons') menu(); else if (id === 'playground') playground(); else account(); }
@@ -240,7 +257,9 @@ function menu() {
         <span class="num">${i + 1}</span><span>${esc(L.title)}</span>
         <span class="tick">${done.has(i) ? '✓' : ''}</span>
       </button>`).join('')}
-    <button class="ghost" onclick="resetProgress()">Reset progress</button>`;
+    <button class="ghost" onclick="checkUpdates()">Check for updates</button>
+    <button class="ghost" onclick="resetProgress()">Reset progress</button>
+    <div class="note" id="note"></div>`;
 }
 
 async function openLesson(i) {
@@ -368,7 +387,11 @@ function account() {
     body = `<p class="body">${acct.status === 'error' ? '<span class="bad">' + esc(acct.message) + '</span>' : 'Sign in with Google so your progress can follow you.'}</p>
       <button class="btn" onclick="signIn()">Sign in with Google</button>`;
   }
-  app.innerHTML = header() + tabs() + `<div class="card"><div class="kicker">Account</div>${body}</div>`;
+  app.innerHTML = header() + tabs() + `<div class="card"><div class="kicker">Account</div>${body}</div>
+    <div class="card"><div class="kicker">App</div>
+      <p class="body">Version ${esc(APP_VERSION)}</p>
+      <button class="btn" onclick="checkUpdates()">Check for updates</button>
+      <div class="note" id="note"></div></div>`;
 }
 
 function signIn() {

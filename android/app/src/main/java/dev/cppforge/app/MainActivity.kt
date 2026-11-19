@@ -11,6 +11,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -42,7 +43,7 @@ class MainActivity : Activity() {
 
         setContentView(web)
         web.loadUrl("file:///android_asset/index.html")
-        Thread { checkForUpdate() }.start()
+        Thread { checkForUpdate(manual = false) }.start()
     }
 
     // Exposed to the page as window.AndroidBridge
@@ -57,6 +58,14 @@ class MainActivity : Activity() {
             prefs.edit().clear().apply()
             pushAccount(null)
         }
+
+        @JavascriptInterface
+        fun checkUpdate() {
+            Thread { checkForUpdate(manual = true) }.start()
+        }
+
+        @JavascriptInterface
+        fun getVersion(): String = BuildConfig.VERSION_NAME
     }
 
     // Google device sign-in: show a code, the user approves it on google.com/device, we poll for tokens.
@@ -140,39 +149,44 @@ class MainActivity : Activity() {
         return JSONObject(stream.bufferedReader().use { it.readText() })
     }
 
-    private fun getJson(url: String, token: String): JSONObject {
+    private fun getJson(url: String, token: String? = null): JSONObject {
         val conn = URL(url).openConnection() as HttpURLConnection
-        conn.setRequestProperty("Authorization", "Bearer $token")
-        conn.connectTimeout = 10000
-        conn.readTimeout = 10000
+        conn.connectTimeout = 6000
+        conn.readTimeout = 6000
+        if (token != null) conn.setRequestProperty("Authorization", "Bearer $token")
         return JSONObject(conn.inputStream.bufferedReader().use { it.readText() })
     }
 
-    // Checks version.json on GitHub. If a newer APK exists, asks the user before opening the download.
-    private fun checkForUpdate() {
+    private fun toast(message: String) {
+        runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_LONG).show() }
+    }
+
+    // Checks version.json on GitHub. Auto checks stay quiet; manual checks always report a result.
+    private fun checkForUpdate(manual: Boolean) {
         try {
-            val conn = URL(VERSION_URL).openConnection() as HttpURLConnection
-            conn.connectTimeout = 4000
-            conn.readTimeout = 4000
-            val json = JSONObject(conn.inputStream.bufferedReader().use { it.readText() })
+            val json = getJson(VERSION_URL)
             val remoteCode = json.getInt("android_versionCode")
-            if (remoteCode > BuildConfig.VERSION_CODE && !isFinishing) {
+            if (remoteCode > BuildConfig.VERSION_CODE) {
                 val name = json.optString("version", "new")
                 val notes = json.optString("notes", "Improvements and fixes.")
                 val apkUrl = json.getString("apk_url")
                 runOnUiThread {
-                    AlertDialog.Builder(this)
-                        .setTitle("Update available: $name")
-                        .setMessage(notes)
-                        .setPositiveButton("Download") { _, _ ->
-                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)))
-                        }
-                        .setNegativeButton("Later", null)
-                        .show()
+                    if (!isFinishing) {
+                        AlertDialog.Builder(this)
+                            .setTitle("Update available: $name")
+                            .setMessage(notes)
+                            .setPositiveButton("Download") { _, _ ->
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)))
+                            }
+                            .setNegativeButton("Later", null)
+                            .show()
+                    }
                 }
+            } else if (manual) {
+                toast("You're on the latest version (${BuildConfig.VERSION_NAME}).")
             }
         } catch (_: Exception) {
-            // Offline or server unreachable: stay silent.
+            if (manual) toast("Couldn't check for updates. Check your connection.")
         }
     }
 }
