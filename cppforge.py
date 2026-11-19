@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
-"""cppforge - learn C++ from your terminal: lessons, exercises, and a playground."""
+"""cppforge - learn C++ from your terminal: lessons, exercises, a playground, and updates."""
 import json
 import os
 import random
 import re
+import shutil
 import sys
 import time
+import urllib.request
 from pathlib import Path
+
+__version__ = "1.1.0"
+REPO_RAW = "https://raw.githubusercontent.com/glistglistovich228eshkere-afk/cppforge/main"
+VERSION_URL = REPO_RAW + "/version.json"
+SCRIPT_URL = REPO_RAW + "/cppforge.py"
 
 GOLD = "\033[38;2;212;175;55m"
 IVORY = "\033[38;2;236;230;214m"
@@ -93,6 +100,60 @@ KEYWORDS = {"include", "int", "double", "float", "bool", "char", "auto", "void",
 TOKEN = re.compile(r'(//.*$)|("(?:\\.|[^"\\])*")|(#\w+)|(\b\w+\b)|(\s+)|(\S)')
 
 
+# ---------- Updates ----------
+def parse_version(text):
+    return tuple(int(part) for part in re.findall(r"\d+", text))[:3]
+
+
+def fetch(url, timeout=4):
+    request = urllib.request.Request(url, headers={"User-Agent": "cppforge-updater"})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read()
+
+
+def check_for_update(timeout=4, quiet=True):
+    """Return the remote version info if a newer release exists, otherwise None."""
+    try:
+        info = json.loads(fetch(VERSION_URL, timeout).decode())
+    except Exception as exc:
+        if not quiet:
+            print(ROSE + f"  Could not reach the update server: {exc}" + RESET)
+        return None
+    if parse_version(info.get("version", "0")) > parse_version(__version__):
+        return info
+    if not quiet:
+        print(MINT + "  ✓ You are on the latest version." + RESET)
+    return None
+
+
+def apply_update():
+    """Download the new script, check it compiles, then replace this file (keeping a backup)."""
+    source = fetch(SCRIPT_URL, timeout=15)
+    compile(source, "cppforge.py", "exec")
+    target = Path(os.path.realpath(__file__))
+    staged = target.with_suffix(".new")
+    staged.write_bytes(source)
+    os.chmod(staged, 0o755)
+    shutil.copy2(target, target.with_suffix(".bak"))
+    os.replace(staged, target)
+
+
+def do_update(info):
+    print(VIOLET + f"  Downloading cppforge {info.get('version')}..." + RESET)
+    try:
+        apply_update()
+    except PermissionError:
+        print(ROSE + "  No permission to write this install. Try: sudo cppforge --update" + RESET)
+        print(MUTED + "  Or update from the repo: git pull && makepkg -si" + RESET)
+        return False
+    except Exception as exc:
+        print(ROSE + f"  Update failed, nothing changed: {exc}" + RESET)
+        return False
+    print(MINT + f"  ✦ Updated to {info.get('version')}. Restart cppforge to use it." + RESET)
+    return True
+
+
+# ---------- Typing & highlighting ----------
 def highlight(line):
     out = []
     for m in TOKEN.finditer(line):
@@ -159,7 +220,7 @@ def header(subtitle=""):
     print()
 
 
-def menu(done):
+def menu(done, update_info=None):
     header("Your path through modern C++")
     for i, lesson in enumerate(LESSONS, 1):
         mark = MINT + "✓" if i - 1 in done else MUTED + "·"
@@ -168,7 +229,9 @@ def menu(done):
     pct = int(100 * len(done) / len(LESSONS))
     bar = "█" * (pct // 5) + "░" * (20 - pct // 5)
     print(f"  {VIOLET}{bar}{RESET} {MUTED}{pct}%{RESET}\n")
-    print(MUTED + "  [number] open lesson   [p] playground   [x] reset   [q] quit" + RESET)
+    if update_info:
+        print(GOLD + f"  ↑ Update {update_info.get('version')} is available. Press [u] to install it." + RESET + "\n")
+    print(MUTED + "  [number] open lesson   [p] playground   [u] update   [x] reset   [q] quit" + RESET)
 
 
 def strip_noise(text):
@@ -309,11 +372,28 @@ def playground():
     pause()
 
 
+def run_update_command():
+    info = check_for_update(timeout=6, quiet=False)
+    if info:
+        do_update(info)
+
+
 def main():
+    if "--version" in sys.argv:
+        print(f"cppforge {__version__}")
+        return
+    if "--update" in sys.argv:
+        run_update_command()
+        return
+
     done = load_progress()
+    update_info = None
+    if os.environ.get("CPPFORGE_NO_UPDATE_CHECK") != "1":
+        update_info = check_for_update(timeout=2)
+
     try:
         while True:
-            menu(done)
+            menu(done, update_info)
             choice = ask().lower()
             if choice == "q":
                 break
@@ -322,6 +402,14 @@ def main():
                 save_progress(done)
             elif choice == "p":
                 playground()
+            elif choice == "u":
+                info = update_info or check_for_update(timeout=6, quiet=False)
+                if info:
+                    do_update(info)
+                    update_info = None
+                    pause()
+                else:
+                    pause()
             elif choice.isdigit() and 1 <= int(choice) <= len(LESSONS):
                 run_lesson(int(choice) - 1, done)
     except (KeyboardInterrupt, EOFError):
