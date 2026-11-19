@@ -1,0 +1,110 @@
+/* Motion system: monochrome theme, preloader, entrance and exit transitions.
+   Only transform and opacity are animated (GPU-composited). Timing values are below. */
+:root{
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);  /* decelerating: entrances and movement */
+  --ease-in:  cubic-bezier(0.4, 0, 1, 1);      /* accelerating: exits */
+  --dur-in: 600ms;     /* entrance length (500 to 700ms) */
+  --dur-out: 300ms;    /* exit length (250 to 350ms) */
+  --stagger: 80ms;     /* delay between items in a cascade (60 to 100ms) */
+  --rise: 16px;        /* entrance travel: starts this far below */
+  --drift: 8px;        /* exit travel: moves this far up */
+}
+
+/* Preloader: a 1px line crosses the screen, then the page fades in. */
+#preloader{position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;transition:opacity var(--dur-out) var(--ease-in),visibility var(--dur-out) var(--ease-in)}
+#preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+#preloader .pl-wrap{width:min(320px,60vw);display:grid;gap:20px;justify-items:center}
+#preloader .pl-word{font:500 12px/1 var(--ui);letter-spacing:.42em;text-transform:uppercase;color:#FFFFFF;opacity:0;animation:fadeRise var(--dur-in) var(--ease-out) 120ms both}
+#preloader .pl-track{width:100%;height:1px;background:#262626;overflow:hidden}
+#preloader .pl-line{height:1px;width:100%;background:#FFFFFF;transform:scaleX(0);transform-origin:left center;animation:lineGrow 1400ms var(--ease-out) 150ms forwards}
+@keyframes lineGrow{to{transform:scaleX(1)}}
+
+/* Entrance: fade in while rising. Stagger comes from the --i variable set in JS. */
+.enter{animation:fadeRise var(--dur-in) var(--ease-out) both;animation-delay:calc(var(--i,0) * var(--stagger))}
+.view-enter{animation:fadeRise var(--dur-in) var(--ease-out) both}
+@keyframes fadeRise{from{opacity:0;transform:translateY(var(--rise))}to{opacity:1;transform:none}}
+
+/* Exit: fade out with a slight upward drift. */
+.leaving{animation:fadeDrift var(--dur-out) var(--ease-in) both;pointer-events:none}
+@keyframes fadeDrift{to{opacity:0;transform:translateY(calc(var(--drift) * -1))}}
+
+/* Modals: rise in on open, drift up and fade on close. */
+.modal{transition:none}
+.modal.show{animation:modalIn var(--dur-in) var(--ease-out) both;pointer-events:auto}
+.modal.closing{animation:modalOut var(--dur-out) var(--ease-in) both;pointer-events:none}
+@keyframes modalIn{from{opacity:0;transform:translate(-50%,calc(-50% + var(--rise)))}to{opacity:1;transform:translate(-50%,-50%)}}
+@keyframes modalOut{to{opacity:0;transform:translate(-50%,calc(-50% - var(--drift)))}}
+
+/* Micro-interactions: smooth, no bounce. */
+.btn,.pill,.icon-btn,.seg button,.track button,.item .dot{transition:background-color 300ms ease,color 300ms ease,border-color 300ms ease,box-shadow 300ms ease,opacity 300ms ease,transform 300ms var(--ease-out)}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:active:not(:disabled),.icon-btn:active{transform:translateY(0) scale(.985)}
+.item:hover:not(:disabled) .dot{transform:scale(1.08)}
+
+/* Monochrome theme: pure black, white, and hairline grays. No color accents. */
+html[data-theme=mono]{
+  --bg:#000000; --card:#000000; --panel:#000000; --panel-line:#262626; --line:#262626;
+  --text:#FFFFFF; --muted:#8A8A8A; --silver:#E5E5E5; --gold:#FFFFFF; --amber:#E5E5E5; --bad:#FFFFFF;
+}
+html[data-theme=mono] .mark,
+html[data-theme=mono] .avatar-btn,
+html[data-theme=mono] .pf-preview{background:#FFFFFF;color:#000000;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .btn.primary,
+html[data-theme=mono] .btn.primary:hover{background:#FFFFFF;color:#000000;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .btn:not(.primary):hover:not(:disabled){background:#FFFFFF;color:#000000;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .seg button.on,
+html[data-theme=mono] .track button.on{background:#FFFFFF;color:#000000;box-shadow:none}
+html[data-theme=mono] .progress-top i{background:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .challenge{background:#000000;border-color:#262626;box-shadow:none}
+html[data-theme=mono] .challenge h3,
+html[data-theme=mono] .sec-title,
+html[data-theme=mono] .kicker,
+html[data-theme=mono] .statusbar b,
+html[data-theme=mono] .credit svg,
+html[data-theme=mono] .credit b{color:#FFFFFF}
+html[data-theme=mono] .item.cur{background:#0A0A0A;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .item.done .dot{background:#FFFFFF;border-color:#FFFFFF;color:#000000}
+html[data-theme=mono] .switch input:checked + span{background:#FFFFFF;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .switch input:checked + span::after{background:#000000}
+html[data-theme=mono] .pf-icon.on{border-color:#FFFFFF;color:#FFFFFF;background:#111111;box-shadow:none}
+html[data-theme=mono] .tcard.on{border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .toast{background:#000000;border-color:#FFFFFF;color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .band{background:rgba(255,255,255,.06);border-left-color:#FFFFFF}
+html[data-theme=mono] .editor:focus-within{box-shadow:inset 0 0 0 1px #FFFFFF}
+html[data-theme=mono] .hl .kw,
+html[data-theme=mono] .gut div.on,
+html[data-theme=mono] .gut div.e{color:#FFFFFF}
+html[data-theme=mono] .hl .st{color:#BDBDBD}
+html[data-theme=mono] .hl .pp,html[data-theme=mono] .hl .nm,html[data-theme=mono] .hl .bi{color:#E5E5E5}
+html[data-theme=mono] .hl .cm{color:#6B6B6B}
+html[data-theme=mono] .gut div.e::before{background:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .uline{border-bottom-color:#FFFFFF}
+html[data-theme=mono] .card-err{background:#000000;border-color:#262626}
+html[data-theme=mono] .card-err .type{color:#FFFFFF}
+html[data-theme=mono] .badge-n{background:#FFFFFF;color:#000000}
+html[data-theme=mono] .icon-btn:hover,
+html[data-theme=mono] .pill:hover{color:#FFFFFF;border-color:#FFFFFF;box-shadow:none}
+html[data-theme=mono] .splitter:hover{background:#FFFFFF}
+html[data-theme=mono] .ta:focus,
+html[data-theme=mono] .sheet input:focus,
+html[data-theme=mono] .pf-in:focus{outline:1px solid #FFFFFF;box-shadow:none;border-color:#FFFFFF}
+html[data-theme=mono] input[type=range]{accent-color:#FFFFFF}
+html[data-theme=mono] .pv-obs::after,
+.pv-mono::after{background:#FFFFFF}
+.pv-mono{background:#000000;border:1px solid #262626}
+
+/* Low-motion setting: keep state changes, drop movement. */
+html.no-motion *,html.no-motion *::before,html.no-motion *::after{animation-duration:1ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}
+
+/* Respect the operating system's reduced-motion setting: fades only, no movement. */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{to{opacity:0}}
+@media (prefers-reduced-motion: reduce){
+  .enter,.view-enter{animation-name:fadeIn}
+  .leaving{animation-name:fadeOut}
+  .modal.show{animation-name:fadeIn}
+  .modal.closing{animation-name:fadeOut}
+  #preloader .pl-word{animation-name:fadeIn;transform:none}
+  #preloader .pl-line{animation-duration:1ms}
+  .btn:hover,.btn:active,.item:hover .dot{transform:none}
+}
