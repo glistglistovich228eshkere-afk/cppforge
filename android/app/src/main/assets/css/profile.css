@@ -1,0 +1,21 @@
+/* Profile: avatar, username, display name, icon, and photo. Stored on this device. */
+.avatar-btn{width:38px;height:38px;flex:none;border-radius:50%;border:1px solid var(--gold);background:linear-gradient(135deg,#FFE44D,var(--gold));color:#0A0A0C;padding:0;display:grid;place-items:center;overflow:hidden;transition:all .3s var(--ease);box-shadow:0 0 12px rgba(255,208,0,.25)}
+.avatar-btn:hover{box-shadow:0 0 20px rgba(255,208,0,.5)}
+.avatar-btn img,.pf-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.av-ic{width:100%;height:100%;display:grid;place-items:center}
+.av-ic svg{width:52%;height:52%}
+.pf-top{display:flex;gap:16px;align-items:center;margin-bottom:4px}
+.pf-preview{width:84px;height:84px;flex:none;border-radius:50%;border:1px solid var(--gold);box-shadow:0 0 22px rgba(255,208,0,.25);background:linear-gradient(135deg,#FFE44D,var(--gold));color:#0A0A0C;display:grid;place-items:center;overflow:hidden}
+.pf-preview .av-ic svg{width:44%;height:44%}
+.pf-fields{flex:1;display:grid;gap:10px;min-width:0}
+.pf-lab{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+.pf-in{background:#0A0A0C;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--text);outline:none;font-size:14px;transition:all .3s var(--ease)}
+.pf-in:focus{border-color:var(--gold);box-shadow:0 0 14px rgba(255,208,0,.2)}
+.pf-err{font-size:12px;color:var(--bad);min-height:1.2em}
+.pf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pf-icon{aspect-ratio:1;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);color:var(--muted);display:grid;place-items:center;padding:0;transition:all .3s var(--ease)}
+.pf-icon svg{width:42%;height:42%}
+.pf-icon:hover{border-color:var(--gold);color:var(--gold)}
+.pf-icon.on{border-color:var(--gold);color:var(--gold);box-shadow:0 0 18px rgba(255,208,0,.3);background:rgba(255,208,0,.07)}
+.pf-row{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.pf-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
